@@ -50,14 +50,14 @@ public enum DiaDaSemana {
     SEXTA(6) {
         @Override
         public String toString() {
-            return "feminino";
+            return "sexta";
         }
     },
     
     SABADO(7) {
         @Override
         public String toString() {
-            return "sexta";
+            return "sábado";
         }
     };
     
