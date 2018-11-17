@@ -83,10 +83,10 @@ public class TesteTaxa {
             erros++;
         }
         
-        /*taxaDAO.remover(10);
+        taxaDAO.remover(10);
         taxaDAO.remover(11);
         taxaDAO.remover(12);
-        taxaDAO.remover(13);*/
+        taxaDAO.remover(13);
         
         return erros;
         
