@@ -121,7 +121,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
                         medico);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel encontrar esta especialidade no banco de dados: " + sqle.getMessage());
+            throw new Exception("Não foi possível encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
             conexao.close();
             return agenda;
