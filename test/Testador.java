@@ -25,13 +25,13 @@ public class Testador {
         //TestePaciente.testar();
         
         try {
-            //TesteMedico.testar();
+            TesteMedico.testar();
             //teste_banco_de_dados.TestePaciente.testar();
             //TesteAgenda.testar();
             //TesteDoenca.testar();
             //teste_banco_de_dados.TesteDoenca.testar();
             //TesteTaxa.testar();
-            teste_banco_de_dados.TesteTaxa.testar();
+            //teste_banco_de_dados.TesteTaxa.testar();
         } catch(Exception e) {
             e.printStackTrace();
         }
