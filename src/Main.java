@@ -39,7 +39,7 @@ public class Main {
             
             EspecialidadeDAOPostgresql especialidadePostgresql = new EspecialidadeDAOPostgresql();
             
-            especialidadePostgresql.remover(10);
+            /*especialidadePostgresql.remover(10);
             especialidadePostgresql.remover(11);
             especialidadePostgresql.remover(12);
             especialidadePostgresql.remover(13);
@@ -50,7 +50,7 @@ public class Main {
             Especialidade especialidade4 = especialidadePostgresql.criar(13, 5, "Adolfo");
            
             
-            System.out.println(especialidadePostgresql.buscarPeloNome("JASHD"));
+            System.out.println(especialidadePostgresql.buscarPeloNome("JASHD"));*/
             
             
         } catch(Exception e) {
