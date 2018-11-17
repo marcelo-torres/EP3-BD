@@ -1,5 +1,7 @@
 package dados_da_clinica;
 
+import java.util.LinkedList;
+
 public enum Mes {
     
     JANEIRO(1) {
@@ -116,11 +118,10 @@ public enum Mes {
         }
         
         return null;
-    }
+    }   
     
     public int numeroDoMes;
 
-    
     Mes(int numeroDoMes) {
         this.numeroDoMes = numeroDoMes;
     }
