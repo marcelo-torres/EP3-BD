@@ -1,15 +1,5 @@
 package dados_da_clinica;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author marcelo
- */
 public enum FormaDePagamento {
     
     A_VISTA(1) {
@@ -46,6 +36,25 @@ public enum FormaDePagamento {
             return "fiado";
         }
     };
+    
+    
+    public static FormaDePagamento obterValor(String formaDePagamento) {
+    
+        if(formaDePagamento.equals(A_VISTA.toString())) {
+            return A_VISTA;
+        } else if(formaDePagamento.equals(CREDITO.toString())) {
+            return CREDITO;
+        } else if(formaDePagamento.equals(DEBITO.toString())) {
+            return DEBITO;
+        } else if(formaDePagamento.equals(CHEQUE.toString())) {
+            return CHEQUE;
+        } else if(formaDePagamento.equals(FIADO.toString())) {
+            return FIADO;
+        } 
+
+        return null;
+    }
+    
     
     public int codigoDaFormaDePagamento;
     
