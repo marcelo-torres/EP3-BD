@@ -27,4 +27,5 @@ public interface MedicoDAO {
     
     public LinkedList<Medico> buscarPeloNome(String nome) throws Exception;
     
+    public LinkedList<Medico> buscarPorEspecialidade(int codigoEspecilidade) throws Exception;
 }
