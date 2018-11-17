@@ -149,6 +149,36 @@ public class MedicoDAOPostgresql implements MedicoDAO {
             return medicosEncontrados;
         }
     }
+
+    @Override
+    public LinkedList<Medico> buscarPorEspecialidade(int codigoEspecilidade) throws Exception {
+        
+        Connection conexao = Conector.obterConexao();
+        
+        LinkedList<Medico> medicosEncontrados = new LinkedList();
+        
+        String sql = "SELECT * FROM " + NOME_COMPLETO + "  JOIN "
+                + EspecialidadeMedicoDAOPostgresql.NOME_COMPLETO
+                + " ON crm = fk_medico_crm"
+                + " WHERE fc_especialidade_codigo = " + codigoEspecilidade;
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            while(resultSet.next()) {
+                int crm = resultSet.getInt("crm");
+                String nomeEncontrado = resultSet.getString("nome");
+                String telefone = resultSet.getString("telefone");
+
+                medicosEncontrados.add(
+                        new Medico(crm, nomeEncontrado, new Telefone(telefone),
+                            new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm))
+                );
+            }
+        } catch(SQLException sqle) {
+            throw new Exception("Erro ao buscar medico(s) no banco de dados: " + sqle.getMessage());
+        } finally {
+            conexao.close();
+            return medicosEncontrados;
+        }
+    }
     
     
     private void gravarEspecialidadesDoMedico(Medico medico) throws Exception {
