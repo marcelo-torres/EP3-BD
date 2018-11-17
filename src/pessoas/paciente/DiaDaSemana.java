@@ -12,7 +12,77 @@ package pessoas.paciente;
  */
 public enum DiaDaSemana {
     
-    DOMINGO(1), SEGUNDA(2), TERCA(3), QUARTA(4), QUINTA(5), SEXTA(6), SABADO(7);
+    DOMINGO(1) {
+        @Override
+        public String toString() {
+            return "domingo";
+        }
+    },
+    
+    SEGUNDA(2) {
+        @Override
+        public String toString() {
+            return "segunda";
+        }
+    },
+    
+    TERCA(3) {
+        @Override
+        public String toString() {
+            return "terça";
+        }
+    },
+    
+    QUARTA(4) {
+        @Override
+        public String toString() {
+            return "quarta";
+        }
+    },
+    
+    QUINTA(5) {
+        @Override
+        public String toString() {
+            return "quinta";
+        }
+    },
+    
+    SEXTA(6) {
+        @Override
+        public String toString() {
+            return "feminino";
+        }
+    },
+    
+    SABADO(7) {
+        @Override
+        public String toString() {
+            return "sexta";
+        }
+    };
+    
+    
+    public static DiaDaSemana obterValor(String diaDaSemana) {
+    
+        if(diaDaSemana.equals(DOMINGO.toString())) {
+            return DOMINGO;
+        } else if(diaDaSemana.equals(SEGUNDA.toString())) {
+            return SEGUNDA;
+        } else if(diaDaSemana.equals(TERCA.toString())) {
+            return TERCA;
+        } else if(diaDaSemana.equals(QUARTA.toString())) {
+            return QUARTA;
+        } else if(diaDaSemana.equals(QUINTA.toString())) {
+            return QUINTA;
+        } else if(diaDaSemana.equals(SEXTA.toString())) {
+            return SEXTA;
+        } else if(diaDaSemana.equals(SABADO.toString())) {
+            return SABADO;
+        } 
+        
+        return null;
+    }
+    
     
     public int codigoDoDiaDaSemana;
     
