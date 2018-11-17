@@ -145,6 +145,20 @@ public class TesteMedico {
             erros++;
         }
         
+        LinkedList<Medico> lista3 = new LinkedList();
+        lista2.add(medico2);
+        lista2.add(medico3);
+        LinkedList<Medico> medicosEncontrados3 = medicoDao.buscarPorEspecialidade(2);
+        
+        if(medicosEncontrados3.containsAll(lista3)
+                && lista3.containsAll(medicosEncontrados3)) {
+        
+            System.out.println("[9] - Busca por especialidade efetuada com sucesso");
+        } else {
+            System.out.println("[9] - Erro durante a busca por especialidade");
+            erros++;
+        }
+        
         medicoDao.remover(medico1.getCRM());
         medicoDao.remover(medico2.getCRM());
         medicoDao.remover(medico3.getCRM());
