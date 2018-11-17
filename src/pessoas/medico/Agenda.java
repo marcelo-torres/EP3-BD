@@ -9,7 +9,7 @@ import pessoas.paciente.DiaDaSemana;
 
 public class Agenda {
 
-    public static final DateTimeFormatter padraoHorario = 
+    public static final DateTimeFormatter PADRAO_DE_HORARIO = 
                                            DateTimeFormatter.ofPattern("HH:mm");
     
     
@@ -21,33 +21,33 @@ public class Agenda {
     
     public static void verificarDiaDaSemana(DiaDaSemana diaDaSemana) {
         if(diaDaSemana == null) {
-            throw new IllegalArgumentException("Um dia da semana deve ser atribuído à esta agenda");
+            throw new IllegalArgumentException("Um dia da semana deve ser atribuído aà esta agenda");
         }
     }
     
     public static void verificarHoraDoInicio(LocalTime horaDoInicio) {
         if(horaDoInicio == null) {
-            throw new IllegalArgumentException("Um horário de início deve ser atribuído à esta agenda");
+            throw new IllegalArgumentException("Um horário de início deve ser atribuído a esta agenda");
         }
     }
     
     public static void verificarHorarioDoFim(LocalTime horarioDoFim) {
         if(horarioDoFim == null) {
-            throw new IllegalArgumentException("Um horário de fim deve ser atribuído à esta agenda");
+            throw new IllegalArgumentException("Um horário de fim deve ser atribuído a esta agenda");
         }
     }
     
     public static void verificarDonoDaAgenda(Medico donoDaAgenda) {
         if(donoDaAgenda == null) {
-            throw new IllegalArgumentException("Um medico deve ser atribuído à esta agenda");
+            throw new IllegalArgumentException("Um medico deve ser atribuído a esta agenda");
         }
     }
     
     
     private final int ID;
     private DiaDaSemana diaDaSemana;
-    private LocalTime horarioDoInicio; // TODO mudar tipo dps
-    private LocalTime horarioDoFim; // TODO mudar tipo dps
+    private LocalTime horarioDoInicio;
+    private LocalTime horarioDoFim;
     private Medico donoDaAgenda;
     
     
