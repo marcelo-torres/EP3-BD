@@ -60,11 +60,11 @@ public class Medico {
         
         Medico outroMedico = (Medico)outro;
         
-        boolean saoIguais = this.CRM == outroMedico.getCRM()
+        boolean saoIguais = (this.CRM == outroMedico.getCRM()
                 && this.nome.equals(outroMedico.getNome())
                 && this.telefone.equals(outroMedico.getTelefone())
                 && this.especialidades.containsAll(outroMedico.getEspecialidades())
-                && outroMedico.getEspecialidades().containsAll(this.especialidades);
+                && outroMedico.getEspecialidades().containsAll(this.especialidades));
         
         return saoIguais;
     }

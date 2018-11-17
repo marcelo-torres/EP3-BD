@@ -1,5 +1,7 @@
 
 import java.sql.DriverManager;
+import pessoas.paciente.TesteAgenda;
+import pessoas.paciente.TestePaciente;
 import teste_banco_de_dados.TesteMedico;
 
 /*
@@ -18,8 +20,12 @@ public class Testador {
     
         DriverManager.registerDriver(new org.postgresql.Driver());
         
+        //TestePaciente.testar();
+        
         try {
-            TesteMedico.testar();
+            //TesteMedico.testar();
+            //teste_banco_de_dados.TestePaciente.testar();
+            TesteAgenda.testar();
         } catch(Exception e) {
             e.printStackTrace();
         }

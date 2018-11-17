@@ -14,12 +14,12 @@ import pessoas.medico.Medico;
  *
  * @author marcelo
  */
-public interface MedicoDao {
+public interface MedicoDAO {
     
     public Medico criar(int crm, String nome, Telefone telefone,
             LinkedList<Especialidade> especialidades) throws Exception;
     
-    public void atualizar(Medico medico) throws Exception;
+    public void gravar(Medico medico) throws Exception;
     
     public void remover(int crm) throws Exception;
     

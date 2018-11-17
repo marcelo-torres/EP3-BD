@@ -1,20 +1,19 @@
 package pessoas;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author marcelo
- */
 public class Telefone {
     
-    String telefone;
+    public static void verificarTelefone(String telefone) {
+        if(telefone.length() < 9 || telefone.length() > 20) {
+            throw new IllegalArgumentException("Tamanho de telefone invalido");
+        }
+    }
+    
+    
+    private String telefone;
+    
     
     public Telefone(String telefone) {
+        verificarTelefone(telefone);
         this.telefone = telefone;
     }
     

@@ -5,7 +5,6 @@
  */
 package banco_de_dados.postgresql;
 
-import banco_de_dados.MedicoDao;
 import dados_da_clinica.Especialidade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,12 +13,13 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import pessoas.Telefone;
 import pessoas.medico.Medico;
+import banco_de_dados.MedicoDAO;
 
 /**
  *
  * @author marcelo
  */
-public class MedicoDaoPostgresql implements MedicoDao {
+public class MedicoDAOPostgresql implements MedicoDAO {
     
     public static final String NOME_DA_TABELA = "Medico";
     public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);
@@ -54,7 +54,7 @@ public class MedicoDaoPostgresql implements MedicoDao {
     }
     
     @Override
-    public void atualizar(Medico medico) throws Exception {
+    public void gravar(Medico medico) throws Exception {
         
         Connection conexao = Conector.obterConexao();
         
@@ -68,12 +68,12 @@ public class MedicoDaoPostgresql implements MedicoDao {
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel atualizar os dados do medico: " + sqle.getMessage());
+            throw new Exception("Nao foi possivel gravar os dados do medico: " + sqle.getMessage());
         } finally {
             conexao.close();
         }
         
-        new EspecialidadeMedicoPostgresql().remover(medico.getCRM());
+        new EspecialidadeMedicoDAOPostgresql().remover(medico.getCRM());
         this.gravarEspecialidadesDoMedico(medico);
     }
     
@@ -84,7 +84,7 @@ public class MedicoDaoPostgresql implements MedicoDao {
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE crm = ?";
         
-        new EspecialidadeMedicoPostgresql().remover(crm);
+        new EspecialidadeMedicoDAOPostgresql().remover(crm);
         
         try(PreparedStatement statement = conexao.prepareStatement(sql)) {
             statement.setInt(1, crm);
@@ -113,7 +113,7 @@ public class MedicoDaoPostgresql implements MedicoDao {
                 String telefone = resultSet.getString("telefone");
 
                 medico = new Medico(crmEncontrado, nome, new Telefone(telefone),
-                        new EspecialidadeMedicoPostgresql().buscarPeloCrm(crm));
+                        new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm));
             }
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel atualizar a especialidade no banco de dados: " + sqle.getMessage());
@@ -139,7 +139,7 @@ public class MedicoDaoPostgresql implements MedicoDao {
 
                 medicosEncontrados.add(
                         new Medico(crm, nomeEncontrado, new Telefone(telefone),
-                            new EspecialidadeMedicoPostgresql().buscarPeloCrm(crm))
+                            new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm))
                 );
             }
         } catch(SQLException sqle) {
@@ -154,7 +154,7 @@ public class MedicoDaoPostgresql implements MedicoDao {
     private void gravarEspecialidadesDoMedico(Medico medico) throws Exception {
         
         LinkedList<Especialidade> especialidadesNaoInseridasPorErro = new LinkedList();
-        EspecialidadeMedicoPostgresql especialidadeMedicoPostgresql = new EspecialidadeMedicoPostgresql();
+        EspecialidadeMedicoDAOPostgresql especialidadeMedicoPostgresql = new EspecialidadeMedicoDAOPostgresql();
         
         boolean erroAoInserirAlgumaEspecialidade = false;
         for(Especialidade especialidade : medico.getEspecialidades()) {

@@ -13,7 +13,7 @@ import pessoas.medico.Medico;
  *
  * @author marcelo
  */
-public interface EspecialidadeMedicoDao {
+public interface EspecialidadeMedicoDAO {
     
     public void criar(Medico medico, Especialidade especialidade) throws Exception;
     

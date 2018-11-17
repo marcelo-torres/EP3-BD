@@ -5,7 +5,6 @@
  */
 package banco_de_dados.postgresql;
 
-import banco_de_dados.EspecialidadeMedicoDao;
 import dados_da_clinica.Especialidade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,12 +12,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import pessoas.medico.Medico;
+import banco_de_dados.EspecialidadeMedicoDAO;
 
 /**
  *
  * @author marcelo
  */
-public class EspecialidadeMedicoPostgresql implements EspecialidadeMedicoDao {
+public class EspecialidadeMedicoDAOPostgresql implements EspecialidadeMedicoDAO {
 
     public static final String NOME_DA_TABELA = "EspecialidadeMedico";
     public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);
@@ -102,7 +102,7 @@ public class EspecialidadeMedicoPostgresql implements EspecialidadeMedicoDao {
         
         LinkedList<Especialidade> especialidadesEncontradas = new LinkedList();
         
-        EspecialidadePostgresql especialidadePostgresql = new EspecialidadePostgresql();
+        EspecialidadeDAOPostgresql especialidadePostgresql = new EspecialidadeDAOPostgresql();
         for(int codigoDeEspecialidade : codigoDasEspecialidadesEncontradas) {
             Especialidade especialidade = especialidadePostgresql.buscarPeloCodigo(codigoDeEspecialidade);
             especialidadesEncontradas.add(especialidade);

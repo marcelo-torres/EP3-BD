@@ -12,11 +12,11 @@ import java.util.LinkedList;
  *
  * @author marcelo
  */
-public interface EspecialidadeDao {
+public interface EspecialidadeDAO {
     
     public Especialidade criar(int codigo, int indice, String nome) throws Exception;
     
-    public void atualizar(Especialidade especialidade) throws Exception;
+    public void gravar(Especialidade especialidade) throws Exception;
     
     public void remover(int codigo) throws Exception;
     

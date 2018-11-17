@@ -5,7 +5,6 @@
  */
 package banco_de_dados.postgresql;
 
-import banco_de_dados.EspecialidadeDao;
 import dados_da_clinica.Especialidade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,12 +12,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
+import banco_de_dados.EspecialidadeDAO;
 
 /**
  *
  * @author marcelo
  */
-public class EspecialidadePostgresql implements EspecialidadeDao {
+public class EspecialidadeDAOPostgresql implements EspecialidadeDAO {
 
     public static final String NOME_DA_TABELA = "Especialidade";
     public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);
@@ -48,7 +48,7 @@ public class EspecialidadePostgresql implements EspecialidadeDao {
     }
 
     @Override
-    public void atualizar(Especialidade especialidade) throws Exception {
+    public void gravar(Especialidade especialidade) throws Exception {
         
         Connection conexao = Conector.obterConexao();
         
@@ -62,7 +62,7 @@ public class EspecialidadePostgresql implements EspecialidadeDao {
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel atualizar a especialidade no banco de dados: " + sqle.getMessage());
+            throw new Exception("Nao foi possivel gravar a especialidade no banco de dados: " + sqle.getMessage());
         } finally {
             conexao.close();
         }
@@ -109,7 +109,6 @@ public class EspecialidadePostgresql implements EspecialidadeDao {
             conexao.close();
             return especialidade;
         }
-        
     }
 
     @Override
@@ -135,5 +134,5 @@ public class EspecialidadePostgresql implements EspecialidadeDao {
             return especialidadesEncontradas;
         }
     }
- 
+
 }

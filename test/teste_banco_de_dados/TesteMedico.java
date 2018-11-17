@@ -5,9 +5,9 @@
  */
 package teste_banco_de_dados;
 
-import banco_de_dados.postgresql.EspecialidadeMedicoPostgresql;
-import banco_de_dados.postgresql.EspecialidadePostgresql;
-import banco_de_dados.postgresql.MedicoDaoPostgresql;
+import banco_de_dados.postgresql.EspecialidadeMedicoDAOPostgresql;
+import banco_de_dados.postgresql.EspecialidadeDAOPostgresql;
+import banco_de_dados.postgresql.MedicoDAOPostgresql;
 import dados_da_clinica.Especialidade;
 import java.util.LinkedList;
 import pessoas.Telefone;
@@ -24,9 +24,9 @@ public class TesteMedico {
         int erros = 0;
         boolean sucesso;
         
-        EspecialidadePostgresql especialidadeDao = new EspecialidadePostgresql();
-        MedicoDaoPostgresql medicoDao = new MedicoDaoPostgresql();
-        EspecialidadeMedicoPostgresql especialidadeMedicoDao = new EspecialidadeMedicoPostgresql();
+        EspecialidadeDAOPostgresql especialidadeDao = new EspecialidadeDAOPostgresql();
+        MedicoDAOPostgresql medicoDao = new MedicoDAOPostgresql();
+        EspecialidadeMedicoDAOPostgresql especialidadeMedicoDao = new EspecialidadeMedicoDAOPostgresql();
     
         
         medicoDao.remover(1010);
@@ -95,7 +95,7 @@ public class TesteMedico {
         }
         
         medico1.setNome("Josebaldo Maniaco");
-        medicoDao.atualizar(medico1);
+        medicoDao.gravar(medico1);
         
         Medico medico1_t2 = medicoDao.buscarPeloCrm(medico1.getCRM());
         if(!medico1.equals(medico1_t2)) {
@@ -108,7 +108,7 @@ public class TesteMedico {
         medico2.adicionarEspecialidade(esp5);
         medico2.adicionarEspecialidade(esp2);
         medico2.removerEspecialidade(esp4);
-        medicoDao.atualizar(medico2);
+        medicoDao.gravar(medico2);
         
         Medico medico2_t2 = medicoDao.buscarPeloCrm(medico2.getCRM());
         if(!medico2.equals(medico2_t2)) {
@@ -145,7 +145,7 @@ public class TesteMedico {
             erros++;
         }
         
-        /*medicoDao.remover(medico1.getCRM());
+        medicoDao.remover(medico1.getCRM());
         medicoDao.remover(medico2.getCRM());
         medicoDao.remover(medico3.getCRM());
         
@@ -154,7 +154,7 @@ public class TesteMedico {
         especialidadeDao.remover(esp3.getCodigo());
         especialidadeDao.remover(esp4.getCodigo());
         especialidadeDao.remover(esp5.getCodigo());
-        especialidadeDao.remover(esp6.getCodigo());*/
+        especialidadeDao.remover(esp6.getCodigo());
         
         return erros;
     }
