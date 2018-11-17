@@ -31,4 +31,5 @@ public interface AgendaDAO {
     
     public LinkedList<Agenda> buscarPeloCrm(int crm) throws Exception;
     
+    public LinkedList<Agenda> buscarPeloCrmEPeloDia(int crm, DiaDaSemana diaDaSemana) throws Exception;
 }
