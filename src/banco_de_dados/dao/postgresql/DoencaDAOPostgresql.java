@@ -8,10 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
-public class DoencaDAOPostgresql implements DoencaDAO {
+public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements DoencaDAO {
 
+    public static final String SCHEMA = "clinica_medica";
     public static final String NOME_DA_TABELA = "Doenca";
-    public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);
+    public static final String NOME_COMPLETO = ConectorDAOPostgresql.nomeCompleto(SCHEMA, NOME_DA_TABELA);
     
     
     @Override
@@ -19,7 +20,7 @@ public class DoencaDAOPostgresql implements DoencaDAO {
         
         Doenca doenca = new Doenca(id, nome);
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?)";
         
@@ -32,7 +33,7 @@ public class DoencaDAOPostgresql implements DoencaDAO {
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível criar a doença: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return doenca;
         }
     }
@@ -40,7 +41,7 @@ public class DoencaDAOPostgresql implements DoencaDAO {
     @Override
     public void gravar(Doenca doenca) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "UPDATE " + NOME_COMPLETO + " SET nome = ? WHERE id_doenca = ?";
         
@@ -53,14 +54,14 @@ public class DoencaDAOPostgresql implements DoencaDAO {
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível gravar a doença: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
         }
     }
 
     @Override
     public void remover(int id) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE id_doenca = ?";
         
@@ -72,14 +73,14 @@ public class DoencaDAOPostgresql implements DoencaDAO {
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível excluir a doença: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
         }
     }
 
     @Override
     public Doenca buscarPeloID(int id) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         Doenca doenca = null;
         
@@ -94,7 +95,7 @@ public class DoencaDAOPostgresql implements DoencaDAO {
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível encontrar a doença com este ID: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return doenca;
         }
     }
@@ -102,7 +103,7 @@ public class DoencaDAOPostgresql implements DoencaDAO {
     @Override
     public LinkedList<Doenca> buscarPeloNome(String nome) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         LinkedList<Doenca> doencasEncontradas = new LinkedList();
         
@@ -120,9 +121,8 @@ public class DoencaDAOPostgresql implements DoencaDAO {
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível encontra a(s) doença(s): " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return doencasEncontradas;
         }
-    }
-    
+    } 
 }

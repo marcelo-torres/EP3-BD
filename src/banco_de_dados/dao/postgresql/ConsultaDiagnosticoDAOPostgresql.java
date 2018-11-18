@@ -1,27 +1,25 @@
 package banco_de_dados.dao.postgresql;
 
 import banco_de_dados.dao.ConsultaDiagnosticoDAO;
-import static banco_de_dados.dao.postgresql.AgendaDAOPostgresql.NOME_COMPLETO;
 import dados_da_clinica.Consulta;
 import dados_da_clinica.Consulta.Diagnostico;
 import dados_da_clinica.Doenca;
 import dados_da_clinica.Especialidade;
 import dados_da_clinica.FormaDePagamento;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.LinkedList;
-import pessoas.medico.Agenda;
 import pessoas.medico.Medico;
 import pessoas.paciente.Paciente;
 
 
-public class ConsultaDiagnosticoDAOPostgresql implements ConsultaDiagnosticoDAO {
+public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql implements ConsultaDiagnosticoDAO {
 
+    public static final String SCHEMA = "clinica_medica";
     public static final String NOME_DA_TABELA = "ConsultaDiagnostico";
-    public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);
+    public static final String NOME_COMPLETO = ConectorDAOPostgresql.nomeCompleto(SCHEMA, NOME_DA_TABELA);
     
     
     @Override
@@ -32,7 +30,7 @@ public class ConsultaDiagnosticoDAOPostgresql implements ConsultaDiagnosticoDAO 
         Consulta consulta = new Consulta(id, data, pagou, valorPago, formaDePagamento, 
                 especialidade, inicio, fim, paciente, medico);
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?, ?,"
                 + " ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -81,7 +79,7 @@ public class ConsultaDiagnosticoDAOPostgresql implements ConsultaDiagnosticoDAO 
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível criar a consulta: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return consulta;
         }
     }
@@ -130,5 +128,4 @@ public class ConsultaDiagnosticoDAOPostgresql implements ConsultaDiagnosticoDAO 
     public LinkedList<Consulta> buscarPeloMedico(Medico medico) throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 }

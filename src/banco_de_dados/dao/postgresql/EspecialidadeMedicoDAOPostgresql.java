@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package banco_de_dados.dao.postgresql;
 
 import dados_da_clinica.Especialidade;
@@ -14,20 +9,18 @@ import java.util.LinkedList;
 import pessoas.medico.Medico;
 import banco_de_dados.dao.EspecialidadeMedicoDAO;
 
-/**
- *
- * @author marcelo
- */
-public class EspecialidadeMedicoDAOPostgresql implements EspecialidadeMedicoDAO {
 
+public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql implements EspecialidadeMedicoDAO {
+
+    public static final String SCHEMA = "clinica_medica";
     public static final String NOME_DA_TABELA = "EspecialidadeMedico";
-    public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);
+    public static final String NOME_COMPLETO = ConectorDAOPostgresql.nomeCompleto(SCHEMA, NOME_DA_TABELA);
     
     
     @Override
     public void criar(Medico medico, Especialidade especialidade) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?)";
         
@@ -40,13 +33,13 @@ public class EspecialidadeMedicoDAOPostgresql implements EspecialidadeMedicoDAO 
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel atribuir esta especialidade ao medico: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
         }
     }
 
     @Override
     public void remover(Medico medico, Especialidade especialidade) throws Exception {
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO
                 + " WHERE fk_especialidade_codigo = ? AND fk_medico_crm = ?";
@@ -60,13 +53,13 @@ public class EspecialidadeMedicoDAOPostgresql implements EspecialidadeMedicoDAO 
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover esta especialidade do medico: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
         }
     }
     
     @Override
     public void remover(int crm) throws Exception {
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO
                 + " WHERE fk_medico_crm = ?";
@@ -79,14 +72,14 @@ public class EspecialidadeMedicoDAOPostgresql implements EspecialidadeMedicoDAO 
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover as especialidades do medico: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
         }
     }
     
     @Override
     public LinkedList<Especialidade> buscarPeloCrm(int crm) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         LinkedList<Integer> codigoDasEspecialidadesEncontradas = new LinkedList();
         
@@ -110,5 +103,4 @@ public class EspecialidadeMedicoDAOPostgresql implements EspecialidadeMedicoDAO 
         
         return especialidadesEncontradas;
     }
-    
 }

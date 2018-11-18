@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package banco_de_dados.dao.postgresql;
 
 import java.sql.Connection;
@@ -16,14 +11,12 @@ import pessoas.paciente.DiaDaSemana;
 import banco_de_dados.dao.AgendaDAO;
 import java.sql.ResultSet;
 
-/**
- *
- * @author marcelo
- */
-public class AgendaDAOPostgresql implements AgendaDAO{
 
+public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements AgendaDAO{
+
+    public static final String SCHEMA = "clinica_medica";
     public static final String NOME_DA_TABELA = "Agenda";
-    public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);
+    public static final String NOME_COMPLETO = ConectorDAOPostgresql.nomeCompleto(SCHEMA, NOME_DA_TABELA);
     
     
     
@@ -33,7 +26,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         Agenda agenda = new Agenda(id, diaDaSemana, horarioDeInicio, 
                 horarioDoFim, donoDaAgenda);
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?)";
         
@@ -49,7 +42,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel criar a genda no banco de dados: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return agenda;
         }
     }
@@ -57,7 +50,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
     @Override
     public void gravar(Agenda agenda) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "UPDATE " + NOME_COMPLETO + " SET dia_semana = ?, "
                 + "horario_inicio = ?, horario_fim = ?, fk_medico_crm = ? "
@@ -75,14 +68,14 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel gravar a agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
         }
     }
 
     @Override
     public void remover(int id) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE id_agenda = ?";
         
@@ -94,14 +87,14 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover a agenda do banco de dados: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
         }
     }
 
     @Override
     public Agenda buscar(int id) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         Agenda agenda = null;
         
@@ -123,7 +116,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return agenda;
         }
     }
@@ -131,7 +124,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
     @Override
     public LinkedList<Agenda> buscarPeloDia(DiaDaSemana diaDaSemana) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         LinkedList<Agenda> agendasEncontradas = new LinkedList();
         
@@ -156,7 +149,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return agendasEncontradas;
         }
     }
@@ -164,7 +157,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
     @Override
     public LinkedList<Agenda> buscarPeloCrm(int crm) throws Exception {
         
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         LinkedList<Agenda> agendasEncontradas = new LinkedList();
         
@@ -189,7 +182,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return agendasEncontradas;
         }
     }
@@ -197,7 +190,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
     @Override
     public LinkedList<Agenda> buscarPeloCrmEPeloDia(int crm, DiaDaSemana diaDaSemana) throws Exception {
     
-        Connection conexao = Conector.obterConexao();
+        //Connection conexao = Conector.obterConexao();
         
         LinkedList<Agenda> agendasEncontradas = new LinkedList();
         
@@ -223,7 +216,7 @@ public class AgendaDAOPostgresql implements AgendaDAO{
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            conexao.close();
+            //conexao.close();
             return agendasEncontradas;
         }
     }

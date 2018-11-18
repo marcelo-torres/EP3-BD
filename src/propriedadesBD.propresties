@@ -1,0 +1,3 @@
+USUARIO = escravo
+SENHA = escravoDoEstudante
+HOST = jdbc:postgresql://localhost:5432/EPBD

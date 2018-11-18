@@ -10,8 +10,6 @@
  */
 
 import banco_de_dados.dao.postgresql.EspecialidadeDAOPostgresql;
-import banco_de_dados.ConnectionFactory;
-import java.sql.Connection;
 import java.sql.DriverManager;
 
 import banco_de_dados.*;
@@ -26,7 +24,7 @@ public class Main {
     
     public static void main(String[] args) throws Exception {
     
-        ConnectionFactory connectionFactory = new ConnectionFactory();
+        
         
         //Class.forName("org.postgresql.Driver");
         DriverManager.registerDriver(new org.postgresql.Driver());
