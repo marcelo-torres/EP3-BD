@@ -1,6 +1,7 @@
 
 import java.sql.DriverManager;
 import pessoas.paciente.TesteAgenda;
+import pessoas.paciente.TesteConsulta;
 import pessoas.paciente.TesteDoenca;
 import pessoas.paciente.TestePaciente;
 import pessoas.paciente.TesteTaxa;
@@ -25,13 +26,14 @@ public class Testador {
         //TestePaciente.testar();
         
         try {
-            TesteMedico.testar();
+            //TesteMedico.testar();
             //teste_banco_de_dados.TestePaciente.testar();
             //TesteAgenda.testar();
             //TesteDoenca.testar();
             //teste_banco_de_dados.TesteDoenca.testar();
             //TesteTaxa.testar();
             //teste_banco_de_dados.TesteTaxa.testar();
+            TesteConsulta.testar();
         } catch(Exception e) {
             e.printStackTrace();
         }
