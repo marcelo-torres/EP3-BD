@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package banco_de_dados.postgresql;
+package banco_de_dados.dao.postgresql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,13 +14,13 @@ import pessoas.Telefone;
 import pessoas.paciente.CPF;
 import pessoas.paciente.Paciente;
 import pessoas.paciente.Sexo;
-import banco_de_dados.PacienteDAO;
+import banco_de_dados.dao.PacienteDAO;
 
 /**
  *
  * @author marcelo
  */
-public class PacienteDAOPortgresql implements PacienteDAO {
+public class PacienteDAOPostgresql implements PacienteDAO {
 
     public static final String NOME_DA_TABELA = "Paciente";
     public static final String NOME_COMPLETO = Conector.nomeCompleto(NOME_DA_TABELA);

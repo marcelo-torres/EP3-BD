@@ -19,11 +19,69 @@ import teste_banco_de_dados.TesteMedico;
  */
 public class Testador {
     
+    public static void testarTudo() {
+    
+        int erros = 0;
+        
+        try {
+            erros += TesteMedico.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            erros += teste_banco_de_dados.TestePaciente.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            erros += TesteAgenda.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            erros += TesteDoenca.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            erros += teste_banco_de_dados.TesteDoenca.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            erros += TesteTaxa.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            erros += teste_banco_de_dados.TesteTaxa.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            erros += TesteConsulta.testar();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("\n\n================= FIM DE TESTES =================\n");
+        System.out.println("Erros: " + erros + "\n");
+    }
+    
     public static void main(String[] args) throws Exception {
     
         DriverManager.registerDriver(new org.postgresql.Driver());
         
         //TestePaciente.testar();
+        
+        testarTudo();
         
         try {
             //TesteMedico.testar();
@@ -33,7 +91,7 @@ public class Testador {
             //teste_banco_de_dados.TesteDoenca.testar();
             //TesteTaxa.testar();
             //teste_banco_de_dados.TesteTaxa.testar();
-            TesteConsulta.testar();
+            //TesteConsulta.testar();
         } catch(Exception e) {
             e.printStackTrace();
         }

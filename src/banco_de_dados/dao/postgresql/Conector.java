@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package banco_de_dados.postgresql;
+package banco_de_dados.dao.postgresql;
 
 import banco_de_dados.ConnectionFactory;
 import java.sql.Connection;

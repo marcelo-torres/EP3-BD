@@ -1,4 +1,4 @@
-package banco_de_dados;
+package banco_de_dados.dao;
 
 import dados_da_clinica.Doenca;
 import java.util.LinkedList;

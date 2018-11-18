@@ -1,7 +1,7 @@
-package banco_de_dados.postgresql;
+package banco_de_dados.dao.postgresql;
 
-import banco_de_dados.ConsultaDiagnosticoDAO;
-import static banco_de_dados.postgresql.AgendaDAOPostgresql.NOME_COMPLETO;
+import banco_de_dados.dao.ConsultaDiagnosticoDAO;
+import static banco_de_dados.dao.postgresql.AgendaDAOPostgresql.NOME_COMPLETO;
 import dados_da_clinica.Consulta;
 import dados_da_clinica.Consulta.Diagnostico;
 import dados_da_clinica.Doenca;

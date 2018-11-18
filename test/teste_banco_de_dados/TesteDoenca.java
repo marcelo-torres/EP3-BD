@@ -5,7 +5,7 @@
  */
 package teste_banco_de_dados;
 
-import banco_de_dados.postgresql.DoencaDAOPostgresql;
+import banco_de_dados.dao.postgresql.DoencaDAOPostgresql;
 import dados_da_clinica.Doenca;
 import java.util.LinkedList;
 

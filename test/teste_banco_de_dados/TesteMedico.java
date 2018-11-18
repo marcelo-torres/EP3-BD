@@ -5,9 +5,9 @@
  */
 package teste_banco_de_dados;
 
-import banco_de_dados.postgresql.EspecialidadeMedicoDAOPostgresql;
-import banco_de_dados.postgresql.EspecialidadeDAOPostgresql;
-import banco_de_dados.postgresql.MedicoDAOPostgresql;
+import banco_de_dados.dao.postgresql.EspecialidadeMedicoDAOPostgresql;
+import banco_de_dados.dao.postgresql.EspecialidadeDAOPostgresql;
+import banco_de_dados.dao.postgresql.MedicoDAOPostgresql;
 import dados_da_clinica.Especialidade;
 import java.util.LinkedList;
 import pessoas.Telefone;

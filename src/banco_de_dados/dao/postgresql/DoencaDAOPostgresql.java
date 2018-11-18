@@ -1,6 +1,6 @@
-package banco_de_dados.postgresql;
+package banco_de_dados.dao.postgresql;
 
-import banco_de_dados.DoencaDAO;
+import banco_de_dados.dao.DoencaDAO;
 import dados_da_clinica.Doenca;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

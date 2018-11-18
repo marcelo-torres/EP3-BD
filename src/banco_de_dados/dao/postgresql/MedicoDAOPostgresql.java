@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package banco_de_dados.postgresql;
+package banco_de_dados.dao.postgresql;
 
 import dados_da_clinica.Especialidade;
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import pessoas.Telefone;
 import pessoas.medico.Medico;
-import banco_de_dados.MedicoDAO;
+import banco_de_dados.dao.MedicoDAO;
 
 /**
  *

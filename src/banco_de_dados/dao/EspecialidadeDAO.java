@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package banco_de_dados;
+package banco_de_dados.dao;
 
 import dados_da_clinica.Especialidade;
 import java.util.LinkedList;

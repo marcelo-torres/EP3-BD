@@ -9,12 +9,12 @@
  * @author marcelo
  */
 
+import banco_de_dados.dao.postgresql.EspecialidadeDAOPostgresql;
 import banco_de_dados.ConnectionFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 import banco_de_dados.*;
-import banco_de_dados.postgresql.*;
 import dados_da_clinica.*;
 import java.io.File;
 import java.io.FileNotFoundException;

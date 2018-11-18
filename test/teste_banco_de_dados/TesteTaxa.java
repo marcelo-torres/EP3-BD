@@ -1,7 +1,7 @@
 package teste_banco_de_dados;
 
-import banco_de_dados.postgresql.EspecialidadeDAOPostgresql;
-import banco_de_dados.postgresql.TaxaDAOPostgresql;
+import banco_de_dados.dao.postgresql.EspecialidadeDAOPostgresql;
+import banco_de_dados.dao.postgresql.TaxaDAOPostgresql;
 import dados_da_clinica.Especialidade;
 import dados_da_clinica.Mes;
 import dados_da_clinica.Taxa;

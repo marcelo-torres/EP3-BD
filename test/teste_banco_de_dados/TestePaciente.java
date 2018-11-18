@@ -1,6 +1,6 @@
 package teste_banco_de_dados;
 
-import banco_de_dados.postgresql.PacienteDAOPortgresql;
+import banco_de_dados.dao.postgresql.PacienteDAOPostgresql;
 import java.util.LinkedList;
 import pessoas.Telefone;
 import pessoas.paciente.CPF;
@@ -13,7 +13,7 @@ public class TestePaciente {
     
         int erros = 0;
         
-        PacienteDAOPortgresql pacienteDao = new PacienteDAOPortgresql();
+        PacienteDAOPostgresql pacienteDao = new PacienteDAOPostgresql();
         
         pacienteDao.remover(12);
         pacienteDao.remover(13);
