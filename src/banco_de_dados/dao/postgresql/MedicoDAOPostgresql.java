@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import pessoas.Telefone;
 import pessoas.medico.Medico;
 import banco_de_dados.dao.MedicoDAO;
+import java.sql.Connection;
 
 
 public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements MedicoDAO {
@@ -23,7 +24,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     
         Medico novoMedico = new Medico(crm, nome, telefone, especialidades);
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
 
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?)";
         
@@ -37,7 +38,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel inserir o medico no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
         
         this.gravarEspecialidadesDoMedico(novoMedico);
@@ -48,7 +49,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     @Override
     public void gravar(Medico medico) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "UPDATE " + NOME_COMPLETO + " SET nome = ?, telefone = ? WHERE crm = ?";
         
@@ -62,7 +63,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel gravar os dados do medico: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
         
         new EspecialidadeMedicoDAOPostgresql().remover(medico.getCRM());
@@ -72,7 +73,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     @Override
     public void remover(int crm) throws Exception {
     
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE crm = ?";
         
@@ -86,14 +87,14 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover o medico do banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
     
     @Override
     public Medico buscarPeloCrm(int crm) throws Exception {
     
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
 
         Medico medico = null;
         
@@ -110,15 +111,16 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel atualizar a especialidade no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return medico;
+            conexao.close();
         }
+        
+        return medico;
     }
     
     @Override
     public LinkedList<Medico> buscarPeloNome(String nome) throws Exception {
     
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Medico> medicosEncontrados = new LinkedList();
         
@@ -137,22 +139,23 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         } catch(SQLException sqle) {
             throw new Exception("Erro ao buscar medico(s) no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return medicosEncontrados;
+            conexao.close();
         }
+        
+        return medicosEncontrados;
     }
 
     @Override
     public LinkedList<Medico> buscarPorEspecialidade(int codigoEspecilidade) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Medico> medicosEncontrados = new LinkedList();
         
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  JOIN "
                 + EspecialidadeMedicoDAOPostgresql.NOME_COMPLETO
                 + " ON crm = fk_medico_crm"
-                + " WHERE fc_especialidade_codigo = " + codigoEspecilidade;
+                + " WHERE fk_especialidade_codigo = " + codigoEspecilidade;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
                 int crm = resultSet.getInt("crm");
@@ -167,9 +170,10 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         } catch(SQLException sqle) {
             throw new Exception("Erro ao buscar medico(s) no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return medicosEncontrados;
+            conexao.close();
         }
+        
+        return medicosEncontrados;
     }
     
     

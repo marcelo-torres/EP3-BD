@@ -34,7 +34,15 @@ public class ConnectionFactoryPostgresql extends AbstractConnectionFactory {
     }
     
     @Override
+    protected void setSchema(String schema) {
+        super.schema = schema;
+    }
+    
+    
+    @Override
     public Connection getConexao() throws SQLException {
-        return DriverManager.getConnection(super.host, super.usuario, super.senha);
+        Connection conexao = DriverManager.getConnection(super.host, super.usuario, super.senha);
+        conexao.setSchema(super.schema);
+        return conexao;
     }
 }

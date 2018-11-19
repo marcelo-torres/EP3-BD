@@ -21,7 +21,7 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
     public Especialidade criar(int codigo, int indice, String nome) throws Exception {
         
         Especialidade especialidade = new Especialidade(codigo, indice, nome);
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?)";
         
@@ -35,15 +35,16 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel inserir a especialidade no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return especialidade;
+            conexao.close();
         }
+        
+        return especialidade;
     }
 
     @Override
     public void gravar(Especialidade especialidade) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "UPDATE " + NOME_COMPLETO + " SET indice = ?, nome = ? WHERE codigo = ?";
         
@@ -57,14 +58,14 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel gravar a especialidade no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
 
     @Override
     public void remover(int codigo) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE codigo = ?";
         
@@ -76,14 +77,14 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover a especialidade do banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
     
     @Override
     public Especialidade buscarPeloCodigo(int codigo) throws Exception {
     
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         Especialidade especialidade = null;
         
@@ -99,15 +100,16 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar esta especialidade no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return especialidade;
+            conexao.close();
         }
+        
+        return especialidade;
     }
 
     @Override
     public LinkedList<Especialidade> buscarPeloNome(String nome) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Especialidade> especialidadesEncontradas = new LinkedList();
         
@@ -123,8 +125,9 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
         } catch(SQLException sqle) {
             throw new Exception("Erro ao buscar especialidade(s) no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return especialidadesEncontradas;
+            conexao.close();
         }
+        
+        return especialidadesEncontradas;
     }
 }

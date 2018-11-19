@@ -26,7 +26,7 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         Agenda agenda = new Agenda(id, diaDaSemana, horarioDeInicio, 
                 horarioDoFim, donoDaAgenda);
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?)";
         
@@ -42,15 +42,16 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel criar a genda no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return agenda;
+            conexao.close();
         }
+        
+        return agenda;
     }
 
     @Override
     public void gravar(Agenda agenda) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "UPDATE " + NOME_COMPLETO + " SET dia_semana = ?, "
                 + "horario_inicio = ?, horario_fim = ?, fk_medico_crm = ? "
@@ -68,14 +69,14 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel gravar a agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
 
     @Override
     public void remover(int id) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE id_agenda = ?";
         
@@ -87,14 +88,14 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover a agenda do banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
 
     @Override
     public Agenda buscar(int id) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         Agenda agenda = null;
         
@@ -116,15 +117,16 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         } catch(SQLException sqle) {
             throw new Exception("Não foi possível encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return agenda;
+            conexao.close();
         }
+        
+        return agenda;
     }
 
     @Override
     public LinkedList<Agenda> buscarPeloDia(DiaDaSemana diaDaSemana) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Agenda> agendasEncontradas = new LinkedList();
         
@@ -149,15 +151,16 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return agendasEncontradas;
+            conexao.close();
         }
+        
+        return agendasEncontradas;
     }
 
     @Override
     public LinkedList<Agenda> buscarPeloCrm(int crm) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Agenda> agendasEncontradas = new LinkedList();
         
@@ -182,15 +185,16 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return agendasEncontradas;
+            conexao.close();
         }
+        
+        return agendasEncontradas;
     }
     
     @Override
     public LinkedList<Agenda> buscarPeloCrmEPeloDia(int crm, DiaDaSemana diaDaSemana) throws Exception {
     
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Agenda> agendasEncontradas = new LinkedList();
         
@@ -216,8 +220,9 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar esta agenda no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return agendasEncontradas;
+            conexao.close();
         }
+        
+        return agendasEncontradas;
     }
 }

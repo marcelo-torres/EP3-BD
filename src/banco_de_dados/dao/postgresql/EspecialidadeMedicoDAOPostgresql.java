@@ -20,7 +20,7 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
     @Override
     public void criar(Medico medico, Especialidade especialidade) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?)";
         
@@ -33,13 +33,14 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel atribuir esta especialidade ao medico: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
 
     @Override
     public void remover(Medico medico, Especialidade especialidade) throws Exception {
-        //Connection conexao = Conector.obterConexao();
+        
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO
                 + " WHERE fk_especialidade_codigo = ? AND fk_medico_crm = ?";
@@ -53,13 +54,14 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover esta especialidade do medico: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
     
     @Override
     public void remover(int crm) throws Exception {
-        //Connection conexao = Conector.obterConexao();
+        
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO
                 + " WHERE fk_medico_crm = ?";
@@ -72,14 +74,14 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover as especialidades do medico: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
     
     @Override
     public LinkedList<Especialidade> buscarPeloCrm(int crm) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Integer> codigoDasEspecialidadesEncontradas = new LinkedList();
         
@@ -91,6 +93,8 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
             }
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar as especialidades: " + sqle.getMessage());
+        } finally {
+            conexao.close();
         }
         
         LinkedList<Especialidade> especialidadesEncontradas = new LinkedList();

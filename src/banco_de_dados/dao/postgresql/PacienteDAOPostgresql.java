@@ -23,7 +23,7 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
     public Paciente criar(int codigo, CPF cpf, String nome, Telefone telefone, String endereco, Integer idade, Sexo sexo) throws Exception {
         
         Paciente paciente = new Paciente(codigo, cpf, nome, telefone, endereco, idade, sexo);
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?, ?, ?)";
         
@@ -41,15 +41,16 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel inserir o paciente no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return paciente;
-        }   
+            conexao.close();
+        }
+        
+        return paciente;
     }
 
     @Override
     public void gravar(Paciente paciente) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "UPDATE " + NOME_COMPLETO + " SET cpf = ?, nome = ?, "
                 + "telefone = ?, endereco = ?, idade = ?, sexo = ? WHERE "+NOME_COMPLETO+".codigo = ?";
@@ -68,14 +69,14 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel gravar o paciente no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
     }
 
     @Override
     public void remover(int codigo) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE codigo = ?";
         
@@ -87,7 +88,7 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel remover o paciente do banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
+            conexao.close();
         }
         
     }
@@ -95,7 +96,7 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
     @Override
     public Paciente buscarPeloCodigo(int codigo) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         Paciente paciente = null;
         
@@ -117,14 +118,16 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         } catch(SQLException sqle) {
             throw new Exception("Nao foi possivel encontrar este paciente no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return paciente;
+            conexao.close();
         }
+        
+        return paciente;
     }
 
     @Override
     public Paciente buscarPeloCpf(CPF cpf) throws Exception {
-        //Connection conexao = Conector.obterConexao();
+        
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         Paciente paciente = null;
         
@@ -146,15 +149,16 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         } catch(SQLException sqle) {
             throw new Exception("Erro ao buscar o paciente no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return paciente;
+            conexao.close();
         }
+        
+        return paciente;
     }
 
     @Override
     public LinkedList<Paciente> buscarPeloNome(String nome) throws Exception {
         
-        //Connection conexao = Conector.obterConexao();
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
         LinkedList<Paciente> pacientesEncontrados = new LinkedList();
         
@@ -178,8 +182,9 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         } catch(SQLException sqle) {
             throw new Exception("Erro ao buscar paciente(s) no banco de dados: " + sqle.getMessage());
         } finally {
-            //conexao.close();
-            return pacientesEncontrados;
-        } 
+            conexao.close();
+        }
+        
+        return pacientesEncontrados;
     }
 }
