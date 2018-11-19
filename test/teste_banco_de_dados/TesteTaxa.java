@@ -34,7 +34,6 @@ public class TesteTaxa {
         Taxa taxa3 = taxaDAO.criar(12, 2018, Mes.JUNHO, 10.24, esp1);
         
         Taxa taxa4 = taxaDAO.criar(13, 2018, Mes.JUNHO, 10.24, esp2);
-        Taxa taxa5 = taxaDAO.criar(13, 2018, Mes.JUNHO, 10.24, esp2);
         
         Taxa taxaEncontrada = taxaDAO.buscar(taxa1.getIDTaxa());
         if(taxa1.equals(taxaEncontrada)) {

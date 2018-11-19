@@ -146,8 +146,9 @@ public class TesteMedico {
         }
         
         LinkedList<Medico> lista3 = new LinkedList();
-        lista2.add(medico2);
-        lista2.add(medico3);
+        lista3.add(medico1);
+        lista3.add(medico2);
+        lista3.add(medico3);
         LinkedList<Medico> medicosEncontrados3 = medicoDao.buscarPorEspecialidade(2);
         
         if(medicosEncontrados3.containsAll(lista3)

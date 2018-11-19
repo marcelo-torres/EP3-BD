@@ -289,11 +289,19 @@ public class Consulta {
     
     public void setInicio(LocalTime inicio) {
         verificarInicio(inicio);
+        if(inicio != null) {
+            String horaAux = inicio.format(PADRAO_DE_HORARIO);
+            inicio = LocalTime.parse(horaAux);
+        }
         this.inicio = inicio;
     }
     
     public void setFim(LocalTime fim) {
         verificarFim(fim);
+        if(fim != null) {
+            String horaAux = fim.format(PADRAO_DE_HORARIO);
+            fim = LocalTime.parse(horaAux);
+        }
         this.fim = fim;
     }
     
