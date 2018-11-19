@@ -12,7 +12,7 @@ public abstract class AbstractConnectionFactory {
     protected String usuario;
     protected String senha;
     protected String host;
-    
+    protected String schema;
     
     protected abstract void setUsuario(String usuario);
     
@@ -20,6 +20,8 @@ public abstract class AbstractConnectionFactory {
     
     protected abstract void setHost(String host);
  
+    protected abstract void setSchema(String schema);
+    
     
     public abstract Connection getConexao() throws SQLException;
     
@@ -34,5 +36,6 @@ public abstract class AbstractConnectionFactory {
         this.setUsuario(propriedades.getProperty("USUARIO"));
         this.setSenha(propriedades.getProperty("SENHA"));
         this.setHost(propriedades.getProperty("HOST"));
+        this.setSchema(propriedades.getProperty("SCHEMA"));
     }
 }
