@@ -1,5 +1,6 @@
 package banco_de_dados.dao.postgresql;
 
+import banco_de_dados.BancoDeDadosException;
 import banco_de_dados.dao.ConsultaDiagnosticoDAO;
 import dados_da_clinica.Consulta;
 import dados_da_clinica.Consulta.Diagnostico;
@@ -29,7 +30,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     @Override
     public Consulta criar(int id, LocalDate data, Boolean pagou, Double valorPago, 
             FormaDePagamento formaDePagamento, Especialidade especialidade, 
-            LocalTime inicio, LocalTime fim, Paciente paciente, Medico medico) throws Exception {
+            LocalTime inicio, LocalTime fim, Paciente paciente, Medico medico) throws BancoDeDadosException, SQLException {
         
         Consulta consulta = new Consulta(id, data, pagou, valorPago, formaDePagamento, 
                 especialidade, inicio, fim, paciente, medico);
@@ -81,7 +82,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
             statement.close();
         } catch(SQLException sqle) {
             sqle.printStackTrace();
-            throw new Exception("Não foi possível criar a consulta: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível criar a consulta: ", sqle);
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
@@ -92,7 +93,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public void gravar(Consulta consulta) throws Exception {
+    public void gravar(Consulta consulta) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -143,14 +144,14 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível gravar a consulta no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível gravar a consulta no banco de dados: ", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public void remover(int id) throws Exception {
+    public void remover(int id) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -162,14 +163,14 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível remover a consulta do banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível remover a consulta do banco de dados: ", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public Consulta buscar(int id) throws Exception {
+    public Consulta buscar(int id) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -181,7 +182,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consulta = this.criarConsultaAPartirDe(resultSet);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar esta consulta no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar esta consulta no banco de dados: ", sqle);
         } finally {
             conexao.close();
         }
@@ -190,7 +191,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public LinkedList<Consulta> buscarPelaData(LocalDate data) throws Exception {
+    public LinkedList<Consulta> buscarPelaData(LocalDate data) throws BancoDeDadosException, SQLException {
        
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -203,7 +204,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados: ", sqle);
         } finally {
             conexao.close();
         }
@@ -212,10 +213,11 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public LinkedList<Consulta> buscarPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) throws Exception {
+    public LinkedList<Consulta> buscarPorPeriodo(LocalDate dataInicial, LocalDate dataFinal)
+            throws BancoDeDadosException, SQLException {
         
         if(dataInicial == null || dataFinal == null) {
-            throw new Exception("Nenhum dos parâmetros pode ser nulo");
+            throw new BancoDeDadosException("Nenhum dos parâmetros pode ser nulo");
         }
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
@@ -230,7 +232,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados: ", sqle);
         } finally {
             conexao.close();
         }
@@ -239,7 +241,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
     
     @Override
-    public LinkedList<Consulta> buscarPeloPagou(Boolean pagou) throws Exception {
+    public LinkedList<Consulta> buscarPeloPagou(Boolean pagou) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -252,7 +254,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados: ", sqle);
         } finally {
             conexao.close();
         }
@@ -261,7 +263,8 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public LinkedList<Consulta> buscarPelaFormaDePagamento(FormaDePagamento formaDePagamento) throws Exception {
+    public LinkedList<Consulta> buscarPelaFormaDePagamento(FormaDePagamento formaDePagamento)
+            throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -281,7 +284,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados", sqle);
         } finally {
             conexao.close();   
         }
@@ -290,7 +293,8 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public LinkedList<Consulta> buscarPelaEspecialidade(Integer codigoEspecialidade) throws Exception {
+    public LinkedList<Consulta> buscarPelaEspecialidade(Integer codigoEspecialidade) 
+            throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -310,7 +314,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -319,7 +323,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public LinkedList<Consulta> buscarPeloPaciente(Integer codigoPaciente) throws Exception {
+    public LinkedList<Consulta> buscarPeloPaciente(Integer codigoPaciente) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -339,7 +343,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -348,7 +352,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public LinkedList<Consulta> buscarPeloMedico(Integer crmMedico) throws Exception {
+    public LinkedList<Consulta> buscarPeloMedico(Integer crmMedico) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -368,7 +372,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -377,7 +381,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
 
     @Override
-    public LinkedList<Consulta> buscarPelaDoenca(Integer idDoenca) throws Exception {
+    public LinkedList<Consulta> buscarPelaDoenca(Integer idDoenca) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -397,7 +401,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
                 consultasEncontradas.add(consulta);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a(s) consulta(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a(s) consulta(s) no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -407,7 +411,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     }
     
     
-    private Consulta criarConsultaAPartirDe(ResultSet resultSet) throws SQLException, Exception {
+    private Consulta criarConsultaAPartirDe(ResultSet resultSet) throws BancoDeDadosException, SQLException {
         int id = resultSet.getInt("id_consulta");
         Date dataBancoDeDados = resultSet.getDate("data");
         Boolean pagou = resultSet.getBoolean("pagou");

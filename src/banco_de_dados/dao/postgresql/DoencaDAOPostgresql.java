@@ -1,5 +1,6 @@
 package banco_de_dados.dao.postgresql;
 
+import banco_de_dados.BancoDeDadosException;
 import banco_de_dados.dao.DoencaDAO;
 import dados_da_clinica.Doenca;
 import java.sql.Connection;
@@ -16,7 +17,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
     
     
     @Override
-    public Doenca criar(int id, String nome) throws Exception {
+    public Doenca criar(int id, String nome) throws BancoDeDadosException, SQLException {
         
         Doenca doenca = new Doenca(id, nome);
         
@@ -31,7 +32,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível criar a doença: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível criar a doença: ", sqle);
         } finally {
             conexao.close();
         }
@@ -40,7 +41,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
     }
 
     @Override
-    public void gravar(Doenca doenca) throws Exception {
+    public void gravar(Doenca doenca) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -53,14 +54,14 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível gravar a doença: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível gravar a doença: ", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public void remover(int id) throws Exception {
+    public void remover(int id) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -72,14 +73,14 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível excluir a doença: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível excluir a doença: ", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public Doenca buscarPeloID(int id) throws Exception {
+    public Doenca buscarPeloID(int id) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -94,7 +95,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
                 doenca = new Doenca(idEncontrado, nome);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar a doença com este ID: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar a doença com este ID: ", sqle);
         } finally {
             conexao.close();
         }
@@ -103,7 +104,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
     }
 
     @Override
-    public LinkedList<Doenca> buscarPeloNome(String nome) throws Exception {
+    public LinkedList<Doenca> buscarPeloNome(String nome) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -121,7 +122,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
                 doencasEncontradas.add(doenca);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontra a(s) doença(s): " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontra a(s) doença(s): ", sqle);
         } finally {
             conexao.close();
         }

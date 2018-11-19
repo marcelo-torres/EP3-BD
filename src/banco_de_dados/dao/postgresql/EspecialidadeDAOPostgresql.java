@@ -1,5 +1,6 @@
 package banco_de_dados.dao.postgresql;
 
+import banco_de_dados.BancoDeDadosException;
 import dados_da_clinica.Especialidade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,7 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
     
     
     @Override
-    public Especialidade criar(int codigo, int indice, String nome) throws Exception {
+    public Especialidade criar(int codigo, int indice, String nome) throws BancoDeDadosException, SQLException {
         
         Especialidade especialidade = new Especialidade(codigo, indice, nome);
         Connection conexao = this.fabricaDeConexoes.getConexao();
@@ -33,7 +34,7 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel inserir a especialidade no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível inserir a especialidade no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -42,7 +43,7 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
     }
 
     @Override
-    public void gravar(Especialidade especialidade) throws Exception {
+    public void gravar(Especialidade especialidade) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -56,14 +57,14 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel gravar a especialidade no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível gravar a especialidade no banco de dados", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public void remover(int codigo) throws Exception {
+    public void remover(int codigo) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -75,14 +76,14 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel remover a especialidade do banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível remover a especialidade do banco de dados", sqle);
         } finally {
             conexao.close();
         }
     }
     
     @Override
-    public Especialidade buscarPeloCodigo(int codigo) throws Exception {
+    public Especialidade buscarPeloCodigo(int codigo) throws BancoDeDadosException, SQLException {
     
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -98,7 +99,7 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
                 especialidade = new Especialidade(codigoEncontrado, indice, nome);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel encontrar esta especialidade no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar esta especialidade no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -107,7 +108,7 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
     }
 
     @Override
-    public LinkedList<Especialidade> buscarPeloNome(String nome) throws Exception {
+    public LinkedList<Especialidade> buscarPeloNome(String nome) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -123,7 +124,7 @@ public class EspecialidadeDAOPostgresql extends ConectorDAOPostgresql implements
                 especialidadesEncontradas.add(new Especialidade(codigo, indice, nomeEncontrado));
             }
         } catch(SQLException sqle) {
-            throw new Exception("Erro ao buscar especialidade(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Erro ao buscar especialidade(s) no banco de dados", sqle);
         } finally {
             conexao.close();
         }

@@ -1,5 +1,6 @@
 package banco_de_dados.dao.postgresql;
 
+import banco_de_dados.BancoDeDadosException;
 import dados_da_clinica.Especialidade;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     
     @Override
     public Medico criar(int crm, String nome, Telefone telefone,
-            LinkedList<Especialidade> especialidades) throws Exception {
+            LinkedList<Especialidade> especialidades) throws BancoDeDadosException, SQLException {
     
         Medico novoMedico = new Medico(crm, nome, telefone, especialidades);
         
@@ -36,7 +37,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel inserir o medico no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível inserir o médico no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -47,7 +48,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     }
     
     @Override
-    public void gravar(Medico medico) throws Exception {
+    public void gravar(Medico medico) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -61,7 +62,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel gravar os dados do medico: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível gravar os dados do medico", sqle);
         } finally {
             conexao.close();
         }
@@ -71,7 +72,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     }
     
     @Override
-    public void remover(int crm) throws Exception {
+    public void remover(int crm) throws BancoDeDadosException, SQLException {
     
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -85,14 +86,14 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel remover o medico do banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível remover o médico do banco de dados", sqle);
         } finally {
             conexao.close();
         }
     }
     
     @Override
-    public Medico buscarPeloCrm(int crm) throws Exception {
+    public Medico buscarPeloCrm(int crm) throws BancoDeDadosException, SQLException {
     
         Connection conexao = this.fabricaDeConexoes.getConexao();
 
@@ -109,7 +110,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
                         new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm));
             }
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel atualizar a especialidade no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível atualizar a especialidade no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -118,7 +119,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     }
     
     @Override
-    public LinkedList<Medico> buscarPeloNome(String nome) throws Exception {
+    public LinkedList<Medico> buscarPeloNome(String nome) throws BancoDeDadosException, SQLException {
     
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -137,7 +138,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
                 );
             }
         } catch(SQLException sqle) {
-            throw new Exception("Erro ao buscar medico(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Erro ao buscar médico(s) no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -146,7 +147,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     }
 
     @Override
-    public LinkedList<Medico> buscarPorEspecialidade(int codigoEspecilidade) throws Exception {
+    public LinkedList<Medico> buscarPorEspecialidade(int codigoEspecilidade) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -168,7 +169,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
                 );
             }
         } catch(SQLException sqle) {
-            throw new Exception("Erro ao buscar medico(s) no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Erro ao buscar médico(s) no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -177,7 +178,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     }
     
     
-    private void gravarEspecialidadesDoMedico(Medico medico) throws Exception {
+    private void gravarEspecialidadesDoMedico(Medico medico) throws BancoDeDadosException {
         
         LinkedList<Especialidade> especialidadesNaoInseridasPorErro = new LinkedList();
         EspecialidadeMedicoDAOPostgresql especialidadeMedicoPostgresql = new EspecialidadeMedicoDAOPostgresql();
@@ -194,10 +195,10 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         
         if(erroAoInserirAlgumaEspecialidade) {
             if(especialidadesNaoInseridasPorErro.size() == 1) {
-                throw new Exception("Erro ao inserir a seguinte especialidade: "
+                throw new BancoDeDadosException("Erro ao inserir a seguinte especialidade: "
                         + especialidadesNaoInseridasPorErro);
             } else {
-                throw new Exception("Erro ao inserir as seguintes especialidades: "
+                throw new BancoDeDadosException("Erro ao inserir as seguintes especialidades: "
                         + especialidadesNaoInseridasPorErro);
             }
         }

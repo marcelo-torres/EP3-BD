@@ -1,6 +1,7 @@
 package banco_de_dados.dao.postgresql;
 
 import banco_de_dados.AbstractConnectionFactory;
+import banco_de_dados.BancoDeDadosException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,9 +41,13 @@ public class ConnectionFactoryPostgresql extends AbstractConnectionFactory {
     
     
     @Override
-    public Connection getConexao() throws SQLException {
-        Connection conexao = DriverManager.getConnection(super.host, super.usuario, super.senha);
-        conexao.setSchema(super.schema);
-        return conexao;
+    public Connection getConexao() throws BancoDeDadosException {
+        try {
+            Connection conexao = DriverManager.getConnection(super.host, super.usuario, super.senha);
+            conexao.setSchema(super.schema);
+            return conexao;
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível estabelar uma conexão com o servidor", sqle);
+        }
     }
 }

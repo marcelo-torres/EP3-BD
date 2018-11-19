@@ -23,7 +23,7 @@ public abstract class AbstractConnectionFactory {
     protected abstract void setSchema(String schema);
     
     
-    public abstract Connection getConexao() throws SQLException;
+    public abstract Connection getConexao() throws BancoDeDadosException;
     
     
     protected void carregarPropriedades(String caminhoParaArquivoDePropriedades) throws IOException { 

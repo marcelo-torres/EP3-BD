@@ -1,5 +1,6 @@
 package banco_de_dados.dao.postgresql;
 
+import banco_de_dados.BancoDeDadosException;
 import dados_da_clinica.Especialidade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,7 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
     
     
     @Override
-    public void criar(Medico medico, Especialidade especialidade) throws Exception {
+    public void criar(Medico medico, Especialidade especialidade) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -31,14 +32,14 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel atribuir esta especialidade ao medico: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível atribuir esta especialidade ao médico", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public void remover(Medico medico, Especialidade especialidade) throws Exception {
+    public void remover(Medico medico, Especialidade especialidade) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -52,14 +53,14 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel remover esta especialidade do medico: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível remover esta especialidade do médico", sqle);
         } finally {
             conexao.close();
         }
     }
     
     @Override
-    public void remover(int crm) throws Exception {
+    public void remover(int crm) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -72,14 +73,14 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel remover as especialidades do medico: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível remover as especialidades do médico", sqle);
         } finally {
             conexao.close();
         }
     }
     
     @Override
-    public LinkedList<Especialidade> buscarPeloCrm(int crm) throws Exception {
+    public LinkedList<Especialidade> buscarPeloCrm(int crm) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -92,7 +93,7 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
                 codigoDasEspecialidadesEncontradas.add(codigo);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel encontrar as especialidades: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar as especialidades", sqle);
         } finally {
             conexao.close();
         }

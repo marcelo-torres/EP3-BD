@@ -1,5 +1,6 @@
 package banco_de_dados.dao.postgresql;
 
+import banco_de_dados.BancoDeDadosException;
 import banco_de_dados.dao.TaxaDAO;
 import dados_da_clinica.Especialidade;
 import dados_da_clinica.Mes;
@@ -19,7 +20,8 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
     
     
     @Override
-    public Taxa criar(int idTaxa, Integer ano, Mes mes, double valor, Especialidade especialidade) throws Exception {
+    public Taxa criar(int idTaxa, Integer ano, Mes mes, double valor, 
+            Especialidade especialidade) throws BancoDeDadosException, SQLException {
         
         Taxa taxa = new Taxa(idTaxa, ano, mes, valor, especialidade);
         
@@ -37,7 +39,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível criar a taxa: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível criar a taxa", sqle);
         } finally {
             conexao.close();
         }
@@ -46,7 +48,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
     }
 
     @Override
-    public void gravar(Taxa taxa) throws Exception {
+    public void gravar(Taxa taxa) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -63,14 +65,14 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível gravar a taxa: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível gravar a taxa", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public void remover(int idTaxa) throws Exception {
+    public void remover(int idTaxa) throws BancoDeDadosException, SQLException {
               
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -82,14 +84,14 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
             statement.execute();
             statement.close();
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível remover a taxa: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível remover a taxa", sqle);
         } finally {
             conexao.close();
         }
     }
 
     @Override
-    public Taxa buscar(int idTaxa) throws Exception {
+    public Taxa buscar(int idTaxa) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -110,7 +112,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
                 taxa = new Taxa(idTaxaEncontrada, ano, Mes.obterValor(mes), valor, especialidade);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Nao foi possivel encontrar esta especialidade no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar esta especialidade no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -119,7 +121,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
     }
 
     @Override
-    public LinkedList<Taxa> buscarPeloAno(Integer ano) throws Exception {
+    public LinkedList<Taxa> buscarPeloAno(Integer ano) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -142,7 +144,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
                 taxasEncontradas.add(taxa);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar esta taxa no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar esta taxa no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -151,7 +153,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
     }
 
     @Override
-    public LinkedList<Taxa> buscarPeloMes(Mes mes) throws Exception {
+    public LinkedList<Taxa> buscarPeloMes(Mes mes) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -174,7 +176,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
                 taxasEncontradas.add(taxa);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar esta taxa no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar esta taxa no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -183,7 +185,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
     }
 
     @Override
-    public LinkedList<Taxa> buscarPelaEspecialidade(int codigoEspecialidade) throws Exception {
+    public LinkedList<Taxa> buscarPelaEspecialidade(int codigoEspecialidade) throws BancoDeDadosException, SQLException {
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -206,7 +208,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
                 taxasEncontradas.add(taxa);
             }
         } catch(SQLException sqle) {
-            throw new Exception("Não foi possível encontrar esta taxa no banco de dados: " + sqle.getMessage());
+            throw new BancoDeDadosException("Não foi possível encontrar esta taxa no banco de dados", sqle);
         } finally {
             conexao.close();
         }
