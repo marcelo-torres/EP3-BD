@@ -21,24 +21,54 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
     
     
     @Override
-    public Paciente criar(int codigo, CPF cpf, String nome, Telefone telefone, 
-            String endereco, Integer idade, Sexo sexo) throws BancoDeDadosException, SQLException {
-        
-        Paciente paciente = new Paciente(codigo, cpf, nome, telefone, endereco, idade, sexo);
+    public boolean existePaciente(int codigo) throws BancoDeDadosException, SQLException {
+    
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
-        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "SELECT COUNT(1) FROM " + NOME_COMPLETO + 
+                " WHERE codigo =" + codigo;
+        
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            if(resultSet.next()) {
+                int quantidade = resultSet.getInt(1);
+                
+                return quantidade != 0;
+            }
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível verificar a exitência da especialidade no banco de dados", sqle);
+        } finally {
+            conexao.close();
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public Paciente criar(CPF cpf, String nome, Telefone telefone, 
+            String endereco, Integer idade, Sexo sexo) throws BancoDeDadosException, SQLException {
+        
+        Paciente paciente = new Paciente(cpf, nome, telefone, endereco, idade, sexo);
+        Connection conexao = this.fabricaDeConexoes.getConexao();
+        
+        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?) "
+                + "RETURNING codigo";
         
         try(PreparedStatement statement = conexao.prepareStatement(sql)) {
-            statement.setInt(1, codigo);
-            statement.setString(2, cpf.getCPFSemMarcara());
-            statement.setString(3, nome);
-            statement.setString(4, telefone.getTelefone());
-            statement.setString(5, endereco);
-            statement.setInt(6, idade);
-            statement.setString(7, sexo.toString());
+            statement.setString(1, cpf.getCPFSemMarcara());
+            statement.setString(2, nome);
+            statement.setString(3, telefone.getTelefone());
+            statement.setString(4, endereco);
+            statement.setInt(5, idade);
+            statement.setString(6, sexo.toString());
 
             statement.execute();
+            
+            ResultSet resultSet = statement.getResultSet();
+            
+            if(resultSet.next()) {
+                paciente.setCodigo(resultSet.getInt(1));
+            }
+            
             statement.close();
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Não foi possível inserir o paciente no banco de dados", sqle);
@@ -78,6 +108,10 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
     @Override
     public void remover(int codigo) throws BancoDeDadosException, SQLException {
         
+        if(!this.existePaciente(codigo)) {
+            throw new BancoDeDadosException("Não existe nenhum paciente com este código");
+        }
+        
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE codigo = ?";
@@ -105,17 +139,7 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE codigo = " + codigo;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             if(resultSet.next()) {
-                int codigoEncontrado = resultSet.getInt("codigo");
-                String cpf = resultSet.getString("cpf");
-                String nome = resultSet.getString("nome");
-                String telefone = resultSet.getString("telefone");
-                String endereco = resultSet.getString("endereco");
-                String idade = resultSet.getString("idade");
-                String sexo = resultSet.getString("sexo");
-                
-                paciente = new Paciente(codigoEncontrado, new CPF(cpf), nome, 
-                        new Telefone(telefone), endereco, new Integer(idade), 
-                        Sexo.obterValor(sexo));
+                paciente = this.criarPacienteAPartirDe(resultSet);
             }
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Não foi possível encontrar este paciente no banco de dados", sqle);
@@ -136,17 +160,7 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE cpf LIKE '" + cpf.getCPFSemMarcara() + "'";
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             if(resultSet.next()) {
-                int codigo = resultSet.getInt("codigo");
-                String cpfEncontrado = resultSet.getString("cpf");
-                String nome = resultSet.getString("nome");
-                String telefone = resultSet.getString("telefone");
-                String endereco = resultSet.getString("endereco");
-                String idade = resultSet.getString("idade");
-                String sexo = resultSet.getString("sexo");
-                
-                paciente = new Paciente(codigo, new CPF(cpfEncontrado), nome, 
-                        new Telefone(telefone), endereco, new Integer(idade), 
-                        Sexo.obterValor(sexo));
+                paciente = this.criarPacienteAPartirDe(resultSet);
             }
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Erro ao buscar o paciente no banco de dados", sqle);
@@ -167,18 +181,7 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE nome LIKE '%" + nome + "%'";
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int codigo = resultSet.getInt("codigo");
-                String cpf = resultSet.getString("cpf");
-                String nomeEncontrado = resultSet.getString("nome");
-                String telefone = resultSet.getString("telefone");
-                String endereco = resultSet.getString("endereco");
-                String idade = resultSet.getString("idade");
-                String sexo = resultSet.getString("sexo");
-                
-                Paciente paciente = new Paciente(codigo, new CPF(cpf), 
-                        nomeEncontrado, new Telefone(telefone), endereco,
-                        new Integer(idade), Sexo.obterValor(sexo));
-
+                Paciente paciente = this.criarPacienteAPartirDe(resultSet);
                 pacientesEncontrados.add(paciente);
             }
         } catch(SQLException sqle) {
@@ -188,5 +191,20 @@ public class PacienteDAOPostgresql extends ConectorDAOPostgresql implements Paci
         }
         
         return pacientesEncontrados;
+    }
+    
+    
+    private Paciente criarPacienteAPartirDe(ResultSet resultSet) throws SQLException {
+        int codigo = resultSet.getInt("codigo");
+        String cpf = resultSet.getString("cpf");
+        String nome = resultSet.getString("nome");
+        String telefone = resultSet.getString("telefone");
+        String endereco = resultSet.getString("endereco");
+        String idade = resultSet.getString("idade");
+        String sexo = resultSet.getString("sexo");
+
+        return new Paciente(codigo, new CPF(cpf), 
+                nome, new Telefone(telefone), endereco,
+                new Integer(idade), Sexo.obterValor(sexo));
     }
 }

@@ -19,7 +19,39 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
     
     
     @Override
+    public boolean existeEspecialidadeMedico(int codigoEspecialidade, int crm) throws BancoDeDadosException, SQLException {
+    
+        Connection conexao = this.fabricaDeConexoes.getConexao();
+        
+        String sql = "SELECT COUNT(1) FROM " + NOME_COMPLETO
+                + " WHERE fk_especialidade_codigo = " + codigoEspecialidade
+                + " AND fk_medico_crm = " + crm;
+        
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            if(resultSet.next()) {
+                int quantidade = resultSet.getInt(1);
+                
+                return quantidade != 0;
+            }
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível verificar a exitência da especialidade no banco de dados", sqle);
+        } finally {
+            conexao.close();
+        }
+        
+        return false;
+    }
+    
+    @Override
     public void criar(Medico medico, Especialidade especialidade) throws BancoDeDadosException, SQLException {
+        
+        if(!new MedicoDAOPostgresql().existeMedico(medico.getCRM())) {
+            throw new BancoDeDadosException("Não existe nenhum médico com este CRM");
+        }
+        
+        if(!new EspecialidadeDAOPostgresql().existeEspecialidade(especialidade.getCodigo())) {
+            throw new BancoDeDadosException("Não existe nenhuma especialidade com este código");
+        }
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -61,6 +93,10 @@ public class EspecialidadeMedicoDAOPostgresql extends ConectorDAOPostgresql impl
     
     @Override
     public void remover(int crm) throws BancoDeDadosException, SQLException {
+        
+        if(!new MedicoDAOPostgresql().existeMedico(crm)) {
+            throw new BancoDeDadosException("Não existe nenhum médico com este CRM");
+        }
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         

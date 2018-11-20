@@ -11,6 +11,7 @@ import pessoas.medico.Medico;
 import pessoas.paciente.DiaDaSemana;
 import banco_de_dados.dao.AgendaDAO;
 import java.sql.ResultSet;
+import java.sql.Time;
 
 
 public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements AgendaDAO {
@@ -21,26 +22,54 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
     
     
     @Override
-    public Agenda criar(int id, DiaDaSemana diaDaSemana, LocalTime horarioDeInicio, LocalTime horarioDoFim, Medico donoDaAgenda)throws BancoDeDadosException, SQLException {
+    public boolean existeAgenda(int idAgenda) throws BancoDeDadosException, SQLException {
+    
+        Connection conexao = this.fabricaDeConexoes.getConexao();
         
-        Agenda agenda = new Agenda(id, diaDaSemana, horarioDeInicio, 
-                horarioDoFim, donoDaAgenda);
+        String sql = "SELECT COUNT(1) FROM " + NOME_COMPLETO + 
+                " WHERE id_agenda =" + idAgenda;
+        
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            if(resultSet.next()) {
+                int quantidade = resultSet.getInt(1);
+                
+                return quantidade != 0;
+            }
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível verificar a exitência da agenda no banco de dados", sqle);
+        } finally {
+            conexao.close();
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public Agenda criar(DiaDaSemana diaDaSemana, LocalTime horarioDeInicio, LocalTime horarioDoFim, Medico donoDaAgenda)throws BancoDeDadosException, SQLException {
+        
+        Agenda agenda = new Agenda(diaDaSemana, horarioDeInicio, horarioDoFim, donoDaAgenda);
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
-        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (DEFAULT, ?, ?, ?, ?) RETURNING id_agenda";
         
         try(PreparedStatement statement = conexao.prepareStatement(sql)) {
-            statement.setInt(1, id);
-            statement.setString(2, diaDaSemana.toString());
-            statement.setString(3, horarioDeInicio.format(Agenda.PADRAO_DE_HORARIO));
-            statement.setString(4, horarioDoFim.format(Agenda.PADRAO_DE_HORARIO));
-            statement.setInt(5, donoDaAgenda.getCRM());
+            statement.setString(1, diaDaSemana.toString());
+            statement.setTime(2, Time.valueOf(horarioDeInicio));
+            statement.setTime(3, Time.valueOf(horarioDoFim));
+            statement.setInt(4, donoDaAgenda.getCRM());
 
             statement.execute();
+            
+            ResultSet resultSet = statement.getResultSet();
+            
+            if(resultSet.next()) {
+                agenda.setId(resultSet.getInt(1));
+            }
+            
             statement.close();
         } catch(SQLException sqle) {
-            throw new BancoDeDadosException("Não foi possível criar a genda no banco de dados", sqle);
+            throw new BancoDeDadosException("Não foi possível criar a agenda no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -59,10 +88,10 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         
         try(PreparedStatement statement = conexao.prepareStatement(sql)) {
             statement.setString(1, agenda.getDiaDaSemana().toString());
-            statement.setString(2, agenda.getHorarioDoInicio().format(Agenda.PADRAO_DE_HORARIO));
-            statement.setString(3, agenda.getHorarioDoFim().format(Agenda.PADRAO_DE_HORARIO));
+            statement.setTime(2, Time.valueOf(agenda.getHorarioDoInicio()));
+            statement.setTime(3, Time.valueOf(agenda.getHorarioDoFim()));
             statement.setInt(4, agenda.getDonoDaAgenda().getCRM());
-            statement.setInt(5, agenda.getID());
+            statement.setInt(5, agenda.getId());
             
             statement.execute();
             statement.close();
@@ -75,6 +104,10 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
 
     @Override
     public void remover(int id) throws BancoDeDadosException, SQLException {
+        
+        if(!this.existeAgenda(id)) {
+            throw new BancoDeDadosException("Não existe nenhuma agenda com este código");
+        }
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -102,20 +135,10 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE id_agenda = " + id;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             if(resultSet.next()) {
-                int idEncontrado = resultSet.getInt("id_agenda");
-                String diaDaSemana = resultSet.getString("dia_semana");
-                String horarioDoInicio = resultSet.getString("horario_inicio");
-                String horarioDoFim = resultSet.getString("horario_fim");
-                int crm = resultSet.getInt("fk_medico_crm");
-
-                Medico medico = new MedicoDAOPostgresql().buscarPeloCrm(crm);
-                
-                agenda = new Agenda(idEncontrado, DiaDaSemana.obterValor(diaDaSemana),
-                        LocalTime.parse(horarioDoInicio), LocalTime.parse(horarioDoFim),
-                        medico);
+                agenda = this.criarAgendaAPartirDe(resultSet);
             }
         } catch(SQLException sqle) {
-            throw new BancoDeDadosException("Não foi possível encontrar esta agenda no banco de dados: ", sqle);
+            throw new BancoDeDadosException("Não foi possível encontrar esta agenda no banco de dados", sqle);
         } finally {
             conexao.close();
         }
@@ -134,18 +157,7 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
                 + "LIKE '%" + diaDaSemana + "%'";
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int id = resultSet.getInt("id_agenda");
-                String diaDaSemanaEncontrado = resultSet.getString("dia_semana");
-                String horarioDoInicio = resultSet.getString("horario_inicio");
-                String horarioDoFim = resultSet.getString("horario_fim");
-                int crm = resultSet.getInt("fk_medico_crm");
-
-                Medico medico = new MedicoDAOPostgresql().buscarPeloCrm(crm);
-                
-                Agenda agenda = new Agenda(id, DiaDaSemana.obterValor(diaDaSemanaEncontrado),
-                        LocalTime.parse(horarioDoInicio), LocalTime.parse(horarioDoFim),
-                        medico);
-                
+                Agenda agenda = this.criarAgendaAPartirDe(resultSet);
                 agendasEncontradas.add(agenda);
             }
         } catch(SQLException sqle) {
@@ -168,18 +180,7 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
                 " WHERE fk_medico_crm = " + crm ;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int id = resultSet.getInt("id_agenda");
-                String diaDaSemana = resultSet.getString("dia_semana");
-                String horarioDoInicio = resultSet.getString("horario_inicio");
-                String horarioDoFim = resultSet.getString("horario_fim");
-                int crmEncontrado = resultSet.getInt("fk_medico_crm");
-
-                Medico medico = new MedicoDAOPostgresql().buscarPeloCrm(crmEncontrado);
-                
-                Agenda agenda = new Agenda(id, DiaDaSemana.obterValor(diaDaSemana),
-                        LocalTime.parse(horarioDoInicio), LocalTime.parse(horarioDoFim),
-                        medico);
-                
+                Agenda agenda = this.criarAgendaAPartirDe(resultSet);
                 agendasEncontradas.add(agenda);
             }
         } catch(SQLException sqle) {
@@ -204,18 +205,7 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
                 " AND dia_semana LIKE '%" + diaDaSemana + "%'";
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int id = resultSet.getInt("id_agenda");
-                String diaDaSemanaEncontrado = resultSet.getString("dia_semana");
-                String horarioDoInicio = resultSet.getString("horario_inicio");
-                String horarioDoFim = resultSet.getString("horario_fim");
-                int crmEncontrado = resultSet.getInt("fk_medico_crm");
-
-                Medico medico = new MedicoDAOPostgresql().buscarPeloCrm(crmEncontrado);
-                
-                Agenda agenda = new Agenda(id, DiaDaSemana.obterValor(diaDaSemanaEncontrado),
-                        LocalTime.parse(horarioDoInicio), LocalTime.parse(horarioDoFim),
-                        medico);
-                
+                Agenda agenda = this.criarAgendaAPartirDe(resultSet);
                 agendasEncontradas.add(agenda);
             }
         } catch(SQLException sqle) {
@@ -225,5 +215,30 @@ public class AgendaDAOPostgresql extends ConectorDAOPostgresql implements Agenda
         }
         
         return agendasEncontradas;
+    }
+
+    
+    private Agenda criarAgendaAPartirDe(ResultSet resultSet) throws BancoDeDadosException, SQLException {
+        int id = resultSet.getInt("id_agenda");
+        String diaDaSemana = resultSet.getString("dia_semana");
+        LocalTime horarioInicio = this.toLocalTime(resultSet.getTime("horario_inicio"));
+        LocalTime horarioDoFim = this.toLocalTime(resultSet.getTime("horario_fim"));
+        int crmEncontrado = resultSet.getInt("fk_medico_crm");
+        
+        Medico medico = new MedicoDAOPostgresql().buscarPeloCrm(crmEncontrado);
+
+        Agenda agenda = new Agenda(id, DiaDaSemana.obterValor(diaDaSemana),
+                horarioInicio, horarioDoFim,
+                medico);
+        
+        return agenda;
+    }
+    
+    private LocalTime toLocalTime(Time hora) {
+        if(hora == null) {
+            return null;
+        } else {
+            return hora.toLocalTime();
+        }
     }
 }

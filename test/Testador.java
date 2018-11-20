@@ -1,23 +1,24 @@
 
+import banco_de_dados.BancoDeDadosException;
 import java.sql.DriverManager;
-import pessoas.paciente.TesteAgenda;
+import teste_banco_de_dados.TesteAgenda;
 import pessoas.paciente.TesteConsulta;
 import pessoas.paciente.TesteDoenca;
 import pessoas.paciente.TestePaciente;
 import pessoas.paciente.TesteTaxa;
 import teste_banco_de_dados.TesteMedico;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- *
- * @author marcelo
- */
 public class Testador {
+    
+    public static void imprimirExceptionDeBD(Exception e) {
+        if(e instanceof BancoDeDadosException) {
+            Throwable t = ((BancoDeDadosException)e).getCausa();
+            if(t != null) {
+                t.printStackTrace();
+            }
+        }
+    }
     
     public static void testarTudo() {
     
@@ -29,6 +30,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -36,6 +38,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -43,6 +46,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -50,6 +54,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -57,6 +62,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -64,6 +70,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -71,6 +78,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -78,6 +86,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         try {
@@ -85,6 +94,7 @@ public class Testador {
         } catch(Exception e) {
             exceptions++;
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
         System.out.println("\n\n================= FIM DE TESTES =================\n");
@@ -93,11 +103,7 @@ public class Testador {
     }
     
     public static void main(String[] args) {
-    
-        
-        
-        //TestePaciente.testar();
-        
+
         testarTudo();
         
         try {
@@ -113,6 +119,7 @@ public class Testador {
             //teste_banco_de_dados.TesteConsulta.testar();
         } catch(Exception e) {
             e.printStackTrace();
+            imprimirExceptionDeBD(e);
         }
         
     }

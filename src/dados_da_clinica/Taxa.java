@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Taxa {
  
-    public static void verificarIDTaxa(int IDTaxa) {
+    public static void verificarId(int IDTaxa) {
         if(IDTaxa < 0) {
             throw new IllegalArgumentException("O ID da taxa não pode ser negativo");
         }
@@ -39,26 +39,26 @@ public class Taxa {
     }
     
     
-    private final int ID_TAXA;
+    private int id;
     private Integer ano;
     private Mes mes;
     private double valor;
     private Especialidade especialidade;
     
     
-    public Taxa(int idTaxa, Integer ano, Mes mes, double valor, Especialidade especialidade) {
-        
-        verificarIDTaxa(idTaxa);
-        this.ID_TAXA = idTaxa;
-        
+    public Taxa(Integer ano, Mes mes, double valor, Especialidade especialidade) {
         this.setAno(ano);
         this.setMes(mes);
         this.setValor(valor);
         this.setEspecialidade(especialidade);
     }
-
-    public Taxa() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    public Taxa(int id, Integer ano, Mes mes, double valor, Especialidade especialidade) {
+        this.setId(id);
+        this.setAno(ano);
+        this.setMes(mes);
+        this.setValor(valor);
+        this.setEspecialidade(especialidade);
     }
     
     
@@ -71,7 +71,7 @@ public class Taxa {
         
         Taxa outraTaxa = (Taxa)outro;
         
-        boolean saoIguais = (this.ID_TAXA == outraTaxa.getIDTaxa()
+        boolean saoIguais = (this.id == outraTaxa.getId()
                 && this.ano.equals(outraTaxa.getAno())
                 && this.mes == outraTaxa.getMes()
                 && this.valor == outraTaxa.getValor()
@@ -83,7 +83,7 @@ public class Taxa {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 47 * hash + this.ID_TAXA;
+        hash = 47 * hash + this.id;
         hash = 47 * hash + Objects.hashCode(this.ano);
         hash = 47 * hash + Objects.hashCode(this.mes);
         hash = 47 * hash + (int) (Double.doubleToLongBits(this.valor) ^ (Double.doubleToLongBits(this.valor) >>> 32));
@@ -91,6 +91,11 @@ public class Taxa {
         return hash;
     }
     
+    
+    public void setId(int id) {
+        verificarId(id);
+        this.id = id;
+    }
     
     public void setAno(Integer ano) {
         verificarAno(ano);
@@ -113,8 +118,8 @@ public class Taxa {
     }
     
     
-    public int getIDTaxa() {
-        return this.ID_TAXA;
+    public int getId() {
+        return this.id;
     }
     
     public Integer getAno() {

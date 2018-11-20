@@ -1,6 +1,5 @@
 package teste_banco_de_dados;
 
-import banco_de_dados.dao.ConsultaDiagnosticoDAO;
 import banco_de_dados.dao.postgresql.ConsultaDiagnosticoDAOPostgresql;
 import banco_de_dados.dao.postgresql.DoencaDAOPostgresql;
 import banco_de_dados.dao.postgresql.EspecialidadeDAOPostgresql;
@@ -24,6 +23,8 @@ public class TesteConsulta {
     
     public static int testar() throws Exception {
     
+        System.out.println("\n === Testando Consulta Diagnostico ===");
+        
         int erros = 0;
         
         EspecialidadeDAOPostgresql especialidadeDAO = new EspecialidadeDAOPostgresql();
@@ -32,42 +33,9 @@ public class TesteConsulta {
         DoencaDAOPostgresql doencaDAO = new DoencaDAOPostgresql();
         ConsultaDiagnosticoDAOPostgresql consultaDiagnosticoDAO = new ConsultaDiagnosticoDAOPostgresql();
         
-        
-        doencaDAO.remover(1);
-        doencaDAO.remover(2);
-        doencaDAO.remover(3);
-        doencaDAO.remover(4);
-        doencaDAO.remover(5);
-        
-        
-        pacienteDAO.remover(1);
-        pacienteDAO.remover(2);
-        pacienteDAO.remover(3);
-        pacienteDAO.remover(4);
-        
-        
-        medicoDAO.remover(1);
-        medicoDAO.remover(2);
-        medicoDAO.remover(3);
-        medicoDAO.remover(4);
-        
-        
-        especialidadeDAO.remover(10);
-        especialidadeDAO.remover(11);
-        especialidadeDAO.remover(12);
-        
-        
-        consultaDiagnosticoDAO.remover(101);
-        consultaDiagnosticoDAO.remover(102);
-        consultaDiagnosticoDAO.remover(103);
-        consultaDiagnosticoDAO.remover(104);
-        consultaDiagnosticoDAO.remover(105);
-        consultaDiagnosticoDAO.remover(106);
-        
-        
-        Especialidade esp1 = especialidadeDAO.criar(10, 1, "Cariologista");
-        Especialidade esp2 = especialidadeDAO.criar(11, 1, "Psiquiatra");
-        Especialidade esp3 = especialidadeDAO.criar(12, 1, "Veterinario");
+        Especialidade esp1 = especialidadeDAO.criar(1, "Cariologista");
+        Especialidade esp2 = especialidadeDAO.criar(1, "Psiquiatra");
+        Especialidade esp3 = especialidadeDAO.criar(1, "Veterinario");
         
         LinkedList<Especialidade> conjunto1 = new LinkedList();
         conjunto1.add(esp1);
@@ -89,10 +57,10 @@ public class TesteConsulta {
         Medico medico4 = medicoDAO.criar(4, "Juliana Brito", new Telefone("1111-2222"), conjunto12);
         
         
-        Paciente paciente1 = pacienteDAO.criar(1, new CPF("11111111110"), "Marcelo Lindo", new Telefone("1111-2222"), "Rua das Amebas", 24, Sexo.MASCULINO);
-        Paciente paciente2 = pacienteDAO.criar(2, new CPF("11111111101"), "Pikachu da Silva", new Telefone("1111-2222"), "Rua das Pokebolas", 34, Sexo.MASCULINO);
-        Paciente paciente3 = pacienteDAO.criar(3, new CPF("11111111011"), "Boloro Soro", new Telefone("1111-2222"), "Rua dos Taoqueis", 6, Sexo.MASCULINO);
-        Paciente paciente4 = pacienteDAO.criar(4, new CPF("11111110111"), "Nikovoski", new Telefone("1111-2222"), "Rua Chavalosvskindfdfjdf", 24, Sexo.FEMININO);
+        Paciente paciente1 = pacienteDAO.criar(new CPF("11111111110"), "Marcelo Lindo", new Telefone("1111-2222"), "Rua das Amebas", 24, Sexo.MASCULINO);
+        Paciente paciente2 = pacienteDAO.criar(new CPF("11111111101"), "Pikachu da Silva", new Telefone("1111-2222"), "Rua das Pokebolas", 34, Sexo.MASCULINO);
+        Paciente paciente3 = pacienteDAO.criar(new CPF("11111111011"), "Boloro Soro", new Telefone("1111-2222"), "Rua dos Taoqueis", 6, Sexo.MASCULINO);
+        Paciente paciente4 = pacienteDAO.criar(new CPF("11111110111"), "Nikovoski", new Telefone("1111-2222"), "Rua Chavalosvskindfdfjdf", 24, Sexo.FEMININO);
         
         
         Doenca doenca1 = doencaDAO.criar(1, "Rinite");
@@ -102,7 +70,7 @@ public class TesteConsulta {
         Doenca doenca5 = doencaDAO.criar(5, "Louco por vc, dra. Ana");
         
         
-        Consulta consulta1 = consultaDiagnosticoDAO.criar(101, LocalDate.parse("2018-10-19"), false, null, null, 
+        Consulta consulta1 = consultaDiagnosticoDAO.criar(LocalDate.parse("2018-10-19"), false, null, null, 
                 esp1, LocalTime.now(), null, paciente1, medico1);
         
         Consulta.Diagnostico diagnostico1 = consulta1.getDiagnostico();
@@ -114,7 +82,7 @@ public class TesteConsulta {
         consultaDiagnosticoDAO.gravar(consulta1);
         
         
-        Consulta consulta2 = consultaDiagnosticoDAO.criar(102, LocalDate.parse("2017-05-20"), false, null, null, 
+        Consulta consulta2 = consultaDiagnosticoDAO.criar(LocalDate.parse("2017-05-20"), false, null, null, 
                 esp1, null, null, paciente1, medico1);
         
         Consulta.Diagnostico diagnostico2 = consulta2.getDiagnostico();
@@ -126,7 +94,7 @@ public class TesteConsulta {
         consultaDiagnosticoDAO.gravar(consulta2);
         
         
-        Consulta consulta3 = consultaDiagnosticoDAO.criar(103, LocalDate.parse("2018-10-19"), true, 234.5, FormaDePagamento.FIADO, 
+        Consulta consulta3 = consultaDiagnosticoDAO.criar(LocalDate.parse("2018-10-19"), true, 234.5, FormaDePagamento.FIADO, 
                 esp2, LocalTime.now(), LocalTime.now(), paciente2, medico4);
         
         Consulta.Diagnostico diagnostico3 = consulta3.getDiagnostico();
@@ -138,7 +106,7 @@ public class TesteConsulta {
         consultaDiagnosticoDAO.gravar(consulta3);
         
         
-        Consulta consulta4 = consultaDiagnosticoDAO.criar(104, LocalDate.parse("2018-10-20"), true, 10.23, FormaDePagamento.DEBITO, 
+        Consulta consulta4 = consultaDiagnosticoDAO.criar(LocalDate.parse("2018-10-20"), true, 10.23, FormaDePagamento.DEBITO, 
                 esp3, LocalTime.now(), LocalTime.now(), paciente1, medico2);
         
         Consulta.Diagnostico diagnostico4 = consulta4.getDiagnostico();
@@ -150,7 +118,7 @@ public class TesteConsulta {
         consultaDiagnosticoDAO.gravar(consulta4);
         
         
-        Consulta consulta5 = consultaDiagnosticoDAO.criar(105, LocalDate.parse("2018-10-19"), true, 43434.0, FormaDePagamento.DEBITO, 
+        Consulta consulta5 = consultaDiagnosticoDAO.criar(LocalDate.parse("2018-10-19"), true, 43434.0, FormaDePagamento.DEBITO, 
                 esp2, LocalTime.now(), LocalTime.now(), paciente1, medico3);
         
         Consulta.Diagnostico diagnostico5 = consulta5.getDiagnostico();
@@ -162,7 +130,7 @@ public class TesteConsulta {
         consultaDiagnosticoDAO.gravar(consulta5);
        
         
-        Consulta consulta6 = consultaDiagnosticoDAO.criar(106, LocalDate.parse("2018-10-14"), true, 2434343.0, FormaDePagamento.DEBITO, 
+        Consulta consulta6 = consultaDiagnosticoDAO.criar(LocalDate.parse("2018-10-14"), true, 2434343.0, FormaDePagamento.DEBITO, 
                 esp2, LocalTime.now(), LocalTime.now(), paciente1, medico3);
         
 
@@ -181,7 +149,7 @@ public class TesteConsulta {
             System.out.println("[2] - ERRO - As consultas nao sao diferentes");
             erros++;
         }
-        
+
         Consulta consultaEncontrada3 = consultaDiagnosticoDAO.buscar(consulta3.getID());  
         if(consulta3.equals(consultaEncontrada3)) {
             System.out.println("[3] - OK - Consultas iguais");
@@ -359,7 +327,30 @@ public class TesteConsulta {
             System.out.println("[19] - ERRO - Consultas NAO esperadas encontradas");
             erros++;
         }
-                
+        
+        consultaDiagnosticoDAO.remover(consulta1.getID());
+        consultaDiagnosticoDAO.remover(consulta2.getID());
+        consultaDiagnosticoDAO.remover(consulta3.getID());
+        consultaDiagnosticoDAO.remover(consulta4.getID());
+        consultaDiagnosticoDAO.remover(consulta5.getID());
+        consultaDiagnosticoDAO.remover(consulta6.getID());
+        
+        medicoDAO.remover(medico1.getCRM());
+        medicoDAO.remover(medico2.getCRM());
+        medicoDAO.remover(medico3.getCRM());
+        medicoDAO.remover(medico4.getCRM());
+        
+        doencaDAO.remover(doenca1.getID());
+        doencaDAO.remover(doenca2.getID());
+        doencaDAO.remover(doenca3.getID());
+        doencaDAO.remover(doenca4.getID());
+        doencaDAO.remover(doenca5.getID());
+        
+        pacienteDAO.remover(paciente1.getCodigo());
+        pacienteDAO.remover(paciente2.getCodigo());
+        pacienteDAO.remover(paciente3.getCodigo());
+        pacienteDAO.remover(paciente4.getCodigo());
+        
         return erros;
     }
     

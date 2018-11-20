@@ -11,7 +11,9 @@ import pessoas.paciente.Sexo;
 
 public interface PacienteDAO {
  
-    public Paciente criar(int codigo, CPF cpf, String nome, Telefone telefone,
+    public boolean existePaciente(int codigo) throws BancoDeDadosException, SQLException;
+    
+    public Paciente criar(CPF cpf, String nome, Telefone telefone,
             String endereco, Integer idade, Sexo sexo) throws BancoDeDadosException, SQLException;
     
     public void gravar(Paciente paciente) throws BancoDeDadosException, SQLException;

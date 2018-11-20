@@ -8,7 +8,9 @@ import java.util.LinkedList;
 
 public interface EspecialidadeDAO {
     
-    public Especialidade criar(int codigo, int indice, String nome) throws BancoDeDadosException, SQLException;
+    public boolean existeEspecialidade(int codigo) throws BancoDeDadosException, SQLException;
+    
+    public Especialidade criar(int indice, String nome) throws BancoDeDadosException, SQLException;
     
     public void gravar(Especialidade especialidade) throws BancoDeDadosException, SQLException;
     

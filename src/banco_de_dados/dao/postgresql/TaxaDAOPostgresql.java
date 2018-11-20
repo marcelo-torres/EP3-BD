@@ -20,23 +20,53 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
     
     
     @Override
-    public Taxa criar(int idTaxa, Integer ano, Mes mes, double valor, 
+    public boolean existeTaxa(int idTaxa) throws BancoDeDadosException, SQLException {
+    
+        Connection conexao = this.fabricaDeConexoes.getConexao();
+        
+        String sql = "SELECT COUNT(1) FROM " + NOME_COMPLETO + 
+                " WHERE id_taxa =" + idTaxa;
+        
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            if(resultSet.next()) {
+                int quantidade = resultSet.getInt(1);
+                
+                return quantidade != 0;
+            }
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível verificar a exitência da taxa no banco de dados", sqle);
+        } finally {
+            conexao.close();
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public Taxa criar(Integer ano, Mes mes, double valor, 
             Especialidade especialidade) throws BancoDeDadosException, SQLException {
         
-        Taxa taxa = new Taxa(idTaxa, ano, mes, valor, especialidade);
+        Taxa taxa = new Taxa(ano, mes, valor, especialidade);
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
-        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (DEFAULT, ?, ?, ?, ?) "
+                + "RETURNING id_taxa";
         
         try(PreparedStatement statement = conexao.prepareStatement(sql)) {
-            statement.setInt(1, idTaxa);
-            statement.setInt(2, ano);
-            statement.setInt(3, mes.numeroDoMes);
-            statement.setDouble(4, valor);
-            statement.setInt(5, especialidade.getCodigo());
+            statement.setInt(1, ano);
+            statement.setInt(2, mes.numeroDoMes);
+            statement.setDouble(3, valor);
+            statement.setInt(4, especialidade.getCodigo());
 
             statement.execute();
+            
+            ResultSet resultSet = statement.getResultSet();
+            
+            if(resultSet.next()) {
+                taxa.setId(resultSet.getInt(1));
+            }
+            
             statement.close();
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Não foi possível criar a taxa", sqle);
@@ -60,7 +90,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
             statement.setInt(2, taxa.getMes().numeroDoMes);
             statement.setDouble(3, taxa.getValor());
             statement.setInt(4, taxa.getEspecialidade().getCodigo());
-            statement.setInt(5, taxa.getIDTaxa());
+            statement.setInt(5, taxa.getId());
             
             statement.execute();
             statement.close();
@@ -74,6 +104,10 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
     @Override
     public void remover(int idTaxa) throws BancoDeDadosException, SQLException {
               
+        if(!this.existeTaxa(idTaxa)) {
+            throw new BancoDeDadosException("Não existe nenhuma taxa com este ID");
+        }
+        
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE id_taxa = ?";
@@ -100,16 +134,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE id_taxa = " + idTaxa;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             if(resultSet.next()) {
-                int idTaxaEncontrada = resultSet.getInt("id_taxa");
-                Integer ano = resultSet.getInt("ano");
-                int mes = resultSet.getInt("mes");
-                double valor = resultSet.getDouble("valor");
-                int codigoEspecialidade = resultSet.getInt("fk_especialidade_codigo");
-
-                Especialidade especialidade = 
-                        new EspecialidadeDAOPostgresql().buscarPeloCodigo(codigoEspecialidade);
-                
-                taxa = new Taxa(idTaxaEncontrada, ano, Mes.obterValor(mes), valor, especialidade);
+                taxa = this.criarTaxaAPartirDe(resultSet);
             }
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Não foi possível encontrar esta especialidade no banco de dados", sqle);
@@ -130,17 +155,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
         String sql = "SELECT * FROM " + NOME_COMPLETO + " WHERE ano = " + ano; 
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int idTaxa = resultSet.getInt("id_taxa");
-                Integer anoEncontrado = resultSet.getInt("ano");
-                int mes = resultSet.getInt("mes");
-                double valor = resultSet.getDouble("valor");
-                int codigoEspecialidade = resultSet.getInt("fk_especialidade_codigo");
-
-                Especialidade especialidade = 
-                        new EspecialidadeDAOPostgresql().buscarPeloCodigo(codigoEspecialidade);
-                
-                Taxa taxa = new Taxa(idTaxa, anoEncontrado, Mes.obterValor(mes), valor, especialidade);
-                
+                Taxa taxa = this.criarTaxaAPartirDe(resultSet);
                 taxasEncontradas.add(taxa);
             }
         } catch(SQLException sqle) {
@@ -162,17 +177,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
         String sql = "SELECT * FROM " + NOME_COMPLETO + " WHERE mes = " + mes.numeroDoMes; 
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int idTaxa = resultSet.getInt("id_taxa");
-                Integer ano = resultSet.getInt("ano");
-                int mesEncontrado = resultSet.getInt("mes");
-                double valor = resultSet.getDouble("valor");
-                int codigoEspecialidade = resultSet.getInt("fk_especialidade_codigo");
-
-                Especialidade especialidade = 
-                        new EspecialidadeDAOPostgresql().buscarPeloCodigo(codigoEspecialidade);
-                
-                Taxa taxa = new Taxa(idTaxa, ano, Mes.obterValor(mesEncontrado), valor, especialidade);
-                
+                Taxa taxa = this.criarTaxaAPartirDe(resultSet);
                 taxasEncontradas.add(taxa);
             }
         } catch(SQLException sqle) {
@@ -194,17 +199,7 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
         String sql = "SELECT * FROM " + NOME_COMPLETO + " WHERE fk_especialidade_codigo = " + codigoEspecialidade; 
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int idTaxa = resultSet.getInt("id_taxa");
-                Integer ano = resultSet.getInt("ano");
-                int mes = resultSet.getInt("mes");
-                double valor = resultSet.getDouble("valor");
-                int codigoEspecialidadeEncontrado = resultSet.getInt("fk_especialidade_codigo");
-
-                Especialidade especialidade = 
-                        new EspecialidadeDAOPostgresql().buscarPeloCodigo(codigoEspecialidadeEncontrado);
-                
-                Taxa taxa = new Taxa(idTaxa, ano, Mes.obterValor(mes), valor, especialidade);
-                
+                Taxa taxa = this.criarTaxaAPartirDe(resultSet);
                 taxasEncontradas.add(taxa);
             }
         } catch(SQLException sqle) {
@@ -214,5 +209,20 @@ public class TaxaDAOPostgresql extends ConectorDAOPostgresql implements TaxaDAO 
         }
         
         return taxasEncontradas;
+    }
+    
+    
+    private Taxa criarTaxaAPartirDe(ResultSet resultSet) throws BancoDeDadosException, SQLException {
+    
+        int idTaxa = resultSet.getInt("id_taxa");
+        Integer ano = resultSet.getInt("ano");
+        int mes = resultSet.getInt("mes");
+        double valor = resultSet.getDouble("valor");
+        int codigoEspecialidade = resultSet.getInt("fk_especialidade_codigo");
+
+        Especialidade especialidade = 
+                new EspecialidadeDAOPostgresql().buscarPeloCodigo(codigoEspecialidade);
+
+        return new Taxa(idTaxa, ano, Mes.obterValor(mes), valor, especialidade);
     }
 }

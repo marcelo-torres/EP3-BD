@@ -20,6 +20,29 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     
     
     @Override
+    public boolean existeMedico(int crm) throws BancoDeDadosException, SQLException {
+    
+        Connection conexao = this.fabricaDeConexoes.getConexao();
+        
+        String sql = "SELECT COUNT(1) FROM " + NOME_COMPLETO + 
+                " WHERE crm =" + crm;
+        
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            if(resultSet.next()) {
+                int quantidade = resultSet.getInt(1);
+                
+                return quantidade != 0;
+            }
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível verificar a exitência do médico no banco de dados", sqle);
+        } finally {
+            conexao.close();
+        }
+        
+        return false;
+    }
+    
+    @Override
     public Medico criar(int crm, String nome, Telefone telefone,
             LinkedList<Especialidade> especialidades) throws BancoDeDadosException, SQLException {
     
@@ -74,6 +97,10 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
     @Override
     public void remover(int crm) throws BancoDeDadosException, SQLException {
     
+        if(!this.existeMedico(crm)) {
+            throw new BancoDeDadosException("Não existe nenhum médico com este CRM");
+        }
+        
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE crm = ?";
@@ -102,12 +129,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE crm = " + crm;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             if(resultSet.next()) {
-                int crmEncontrado = resultSet.getInt("crm");
-                String nome = resultSet.getString("nome");
-                String telefone = resultSet.getString("telefone");
-
-                medico = new Medico(crmEncontrado, nome, new Telefone(telefone),
-                        new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm));
+                medico = this.criarMedicoAPartirDe(resultSet);
             }
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Não foi possível atualizar a especialidade no banco de dados", sqle);
@@ -128,14 +150,8 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE nome LIKE '%" + nome + "%'";
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int crm = resultSet.getInt("crm");
-                String nomeEncontrado = resultSet.getString("nome");
-                String telefone = resultSet.getString("telefone");
-
-                medicosEncontrados.add(
-                        new Medico(crm, nomeEncontrado, new Telefone(telefone),
-                            new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm))
-                );
+                Medico medico = this.criarMedicoAPartirDe(resultSet);
+                medicosEncontrados.add(medico);
             }
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Erro ao buscar médico(s) no banco de dados", sqle);
@@ -159,14 +175,8 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
                 + " WHERE fk_especialidade_codigo = " + codigoEspecilidade;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int crm = resultSet.getInt("crm");
-                String nomeEncontrado = resultSet.getString("nome");
-                String telefone = resultSet.getString("telefone");
-
-                medicosEncontrados.add(
-                        new Medico(crm, nomeEncontrado, new Telefone(telefone),
-                            new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm))
-                );
+                Medico medico = this.criarMedicoAPartirDe(resultSet);
+                medicosEncontrados.add(medico);
             }
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Erro ao buscar médico(s) no banco de dados", sqle);
@@ -190,6 +200,7 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
             } catch(Exception e) {
                 erroAoInserirAlgumaEspecialidade = true;
                 especialidadesNaoInseridasPorErro.add(especialidade);
+                e.printStackTrace();
             }
         }
         
@@ -202,5 +213,15 @@ public class MedicoDAOPostgresql extends ConectorDAOPostgresql implements Medico
                         + especialidadesNaoInseridasPorErro);
             }
         }
+    }
+    
+    private Medico criarMedicoAPartirDe(ResultSet resultSet) throws BancoDeDadosException, SQLException {
+        int crm = resultSet.getInt("crm");
+        String nome = resultSet.getString("nome");
+        String telefone = resultSet.getString("telefone");
+
+        LinkedList<Especialidade> especialidades = new EspecialidadeMedicoDAOPostgresql().buscarPeloCrm(crm);
+        
+        return new Medico(crm, nome, new Telefone(telefone), especialidades);                     
     }
 }

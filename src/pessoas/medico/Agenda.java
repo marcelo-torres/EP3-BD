@@ -1,6 +1,5 @@
 package pessoas.medico;
 
-
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -13,7 +12,7 @@ public class Agenda {
                                            DateTimeFormatter.ofPattern("HH:mm");
     
     
-    public static void verificarID(int id) {
+    public static void verificarId(int id) {
         if(id < 0) {
             throw new IllegalArgumentException("O ID da agenda não deve ser negativo");
         }
@@ -44,7 +43,7 @@ public class Agenda {
     }
     
     
-    private final int ID;
+    private int id;
     private DiaDaSemana diaDaSemana;
     private LocalTime horarioDoInicio;
     private LocalTime horarioDoFim;
@@ -54,9 +53,16 @@ public class Agenda {
     public Agenda(int id, DiaDaSemana diaDaSemana, LocalTime horarioDoInicio, 
             LocalTime horarioDoFim, Medico donoDaAgenda) {
     
-        verificarID(id);
-        this.ID = id;
-        
+        this.setId(id);
+        this.setDiaDaSemana(diaDaSemana);
+        this.setHorarioDoInicio(horarioDoInicio);
+        this.setHorarioDoFim(horarioDoFim);
+        this.setDonoDaAgenda(donoDaAgenda);
+    }
+    
+    public Agenda(DiaDaSemana diaDaSemana, LocalTime horarioDoInicio, 
+            LocalTime horarioDoFim, Medico donoDaAgenda) {
+    
         this.setDiaDaSemana(diaDaSemana);
         this.setHorarioDoInicio(horarioDoInicio);
         this.setHorarioDoFim(horarioDoFim);
@@ -73,7 +79,7 @@ public class Agenda {
         
         Agenda outraAgenda = (Agenda)outro;
         
-        boolean saoIguais = (this.ID == outraAgenda.getID()
+        boolean saoIguais = (this.id == outraAgenda.getId()
                 && this.diaDaSemana == outraAgenda.getDiaDaSemana()
                 && this.horarioDoInicio.equals(outraAgenda.getHorarioDoInicio())
                 && this.horarioDoFim.equals(outraAgenda.getHorarioDoFim())
@@ -85,7 +91,7 @@ public class Agenda {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 43 * hash + this.ID;
+        hash = 43 * hash + this.id;
         hash = 43 * hash + Objects.hashCode(this.diaDaSemana);
         hash = 43 * hash + Objects.hashCode(this.horarioDoInicio);
         hash = 43 * hash + Objects.hashCode(this.horarioDoFim);
@@ -94,6 +100,11 @@ public class Agenda {
     }
     
     
+    public void setId(int id) {
+        verificarId(id);
+        this.id = id;
+    }
+    
     public void setDiaDaSemana(DiaDaSemana diaDaSemana) {
         verificarDiaDaSemana(diaDaSemana);
         this.diaDaSemana = diaDaSemana;
@@ -101,11 +112,19 @@ public class Agenda {
     
     public void setHorarioDoInicio(LocalTime horarioDoInicio) {
         verificarHoraDoInicio(horarioDoInicio);
+        if(horarioDoInicio != null) {
+            String horaAux = horarioDoInicio.format(PADRAO_DE_HORARIO);
+            horarioDoInicio = LocalTime.parse(horaAux);
+        }
         this.horarioDoInicio = horarioDoInicio;
     }
     
     public void setHorarioDoFim(LocalTime horarioDoFim) {
         verificarHorarioDoFim(horarioDoFim);
+        if(horarioDoFim != null) {
+            String horaAux = horarioDoFim.format(PADRAO_DE_HORARIO);
+            horarioDoFim = LocalTime.parse(horaAux);
+        }
         this.horarioDoFim = horarioDoFim;
     }
     
@@ -115,8 +134,8 @@ public class Agenda {
     }
     
     
-    public int getID() {
-        return this.ID;
+    public int getId() {
+        return this.id;
     }
     
     public DiaDaSemana getDiaDaSemana() {

@@ -11,7 +11,9 @@ import pessoas.paciente.DiaDaSemana;
 
 public interface AgendaDAO {
     
-    public Agenda criar(int id, DiaDaSemana diaDaSemana, LocalTime horarioDeInicio, 
+    public boolean existeAgenda(int idAgenda) throws BancoDeDadosException, SQLException;
+    
+    public Agenda criar(DiaDaSemana diaDaSemana, LocalTime horarioDeInicio, 
             LocalTime horarioDoFim, Medico donoDaAgenda) throws BancoDeDadosException, SQLException;
     
     public void gravar(Agenda agenda) throws BancoDeDadosException, SQLException;

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package teste_banco_de_dados;
 
 import banco_de_dados.dao.postgresql.EspecialidadeMedicoDAOPostgresql;
@@ -13,39 +8,26 @@ import java.util.LinkedList;
 import pessoas.Telefone;
 import pessoas.medico.Medico;
 
-/**
- *
- * @author marcelo
- */
+
 public class TesteMedico {
     
     public static int testar() throws Exception {
     
+        System.out.println("\n === Testando Medico ===");
+        
         int erros = 0;
         boolean sucesso;
         
         EspecialidadeDAOPostgresql especialidadeDao = new EspecialidadeDAOPostgresql();
         MedicoDAOPostgresql medicoDao = new MedicoDAOPostgresql();
         EspecialidadeMedicoDAOPostgresql especialidadeMedicoDao = new EspecialidadeMedicoDAOPostgresql();
-    
         
-        medicoDao.remover(1010);
-        medicoDao.remover(5323);
-        medicoDao.remover(6924);
-        
-        especialidadeDao.remover(1);
-        especialidadeDao.remover(2);
-        especialidadeDao.remover(3);
-        especialidadeDao.remover(4);
-        especialidadeDao.remover(5);
-        especialidadeDao.remover(6);
-        
-        Especialidade esp1 = especialidadeDao.criar(1, 4, "Otorrino");
-        Especialidade esp2 = especialidadeDao.criar(2, 5, "Legista");
-        Especialidade esp3 = especialidadeDao.criar(3, 2, "Ortopedista");
-        Especialidade esp4 = especialidadeDao.criar(4, 8, "Dermatologista");
-        Especialidade esp5 = especialidadeDao.criar(5, 2, "Cardiologista");
-        Especialidade esp6 = especialidadeDao.criar(6, 1, "Clinico Geral");
+        Especialidade esp1 = especialidadeDao.criar(4, "Otorrino");
+        Especialidade esp2 = especialidadeDao.criar(5, "Legista");
+        Especialidade esp3 = especialidadeDao.criar(2, "Ortopedista");
+        Especialidade esp4 = especialidadeDao.criar(8, "Dermatologista");
+        Especialidade esp5 = especialidadeDao.criar(2, "Cardiologista");
+        Especialidade esp6 = especialidadeDao.criar(1, "Clinico Geral");
         
         LinkedList<Especialidade> especialidades1 = new LinkedList();
         especialidades1.add(esp1);
@@ -62,8 +44,8 @@ public class TesteMedico {
         especialidades3.add(esp5);
         Medico medico3 = medicoDao.criar(6924, "Maniaco Hernandes", new Telefone("6666-6666"), especialidades3);
         
-        especialidadeDao.remover(6);
-        Especialidade especialidadeBuscada = especialidadeDao.buscarPeloCodigo(6);
+        especialidadeDao.remover(esp6.getCodigo());
+        Especialidade especialidadeBuscada = especialidadeDao.buscarPeloCodigo(esp6.getCodigo());
         if(especialidadeBuscada == null) {
             System.out.println("[1] Especialidade " + esp6 + " removida com sucesso!");
         } else {
@@ -149,7 +131,7 @@ public class TesteMedico {
         lista3.add(medico1);
         lista3.add(medico2);
         lista3.add(medico3);
-        LinkedList<Medico> medicosEncontrados3 = medicoDao.buscarPorEspecialidade(2);
+        LinkedList<Medico> medicosEncontrados3 = medicoDao.buscarPorEspecialidade(esp2.getCodigo());
         
         if(medicosEncontrados3.containsAll(lista3)
                 && lista3.containsAll(medicosEncontrados3)) {
@@ -169,7 +151,7 @@ public class TesteMedico {
         especialidadeDao.remover(esp3.getCodigo());
         especialidadeDao.remover(esp4.getCodigo());
         especialidadeDao.remover(esp5.getCodigo());
-        especialidadeDao.remover(esp6.getCodigo());
+        //especialidadeDao.remover(esp6.getCodigo());
         
         return erros;
     }

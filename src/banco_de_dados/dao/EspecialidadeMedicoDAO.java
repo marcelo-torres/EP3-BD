@@ -9,6 +9,8 @@ import pessoas.medico.Medico;
 
 public interface EspecialidadeMedicoDAO {
     
+    public boolean existeEspecialidadeMedico(int codigoEspecialidade, int crm) throws BancoDeDadosException, SQLException;
+    
     public void criar(Medico medico, Especialidade especialidade) throws BancoDeDadosException, SQLException;
     
     public void remover(Medico medico, Especialidade especialidade) throws BancoDeDadosException, SQLException;

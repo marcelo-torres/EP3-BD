@@ -15,10 +15,6 @@ public class TestePaciente {
         
         PacienteDAOPostgresql pacienteDao = new PacienteDAOPostgresql();
         
-        pacienteDao.remover(12);
-        pacienteDao.remover(13);
-
-        
         int codigo = 12;
         CPF cpf = new CPF("12312312312");
         String nome = "Mariavaldosf fdfd sf";
@@ -27,7 +23,7 @@ public class TestePaciente {
         Integer idade = 53;
         Sexo sexo = Sexo.MASCULINO;
         
-        Paciente paciente1 = pacienteDao.criar(codigo, cpf, nome, telefone, endereco, idade, sexo);
+        Paciente paciente1 = pacienteDao.criar(cpf, nome, telefone, endereco, idade, sexo);
         
         codigo = 13;
         cpf = new CPF("11122233344");
@@ -37,9 +33,9 @@ public class TestePaciente {
         idade = 24;
         sexo = Sexo.MASCULINO;
         
-        Paciente paciente2 = pacienteDao.criar(codigo, cpf, nome, telefone, endereco, idade, sexo);
+        Paciente paciente2 = pacienteDao.criar(cpf, nome, telefone, endereco, idade, sexo);
        
-        Paciente pacienteEncontrado = pacienteDao.buscarPeloCodigo(12);     
+        Paciente pacienteEncontrado = pacienteDao.buscarPeloCodigo(paciente1.getCodigo());     
         if(pacienteEncontrado.equals(paciente1)) {
             System.out.println("[1] - OK - Busca funcionando");
         } else {
@@ -51,7 +47,7 @@ public class TestePaciente {
         paciente1.setSexo(Sexo.FEMININO);
         pacienteDao.gravar(paciente1);
         
-        pacienteEncontrado = pacienteDao.buscarPeloCodigo(12);
+        pacienteEncontrado = pacienteDao.buscarPeloCodigo(paciente1.getCodigo());
         if(pacienteEncontrado.equals(paciente1)) {
             System.out.println("[2] - OK - Alteracao realizada com sucesso");
         } else {
@@ -80,8 +76,8 @@ public class TestePaciente {
         }
 
         
-        pacienteDao.remover(13);
-        pacienteDao.remover(12);
+        pacienteDao.remover(paciente1.getCodigo());
+        pacienteDao.remover(paciente2.getCodigo());
         
         return erros;
         

@@ -14,7 +14,9 @@ import pessoas.paciente.Paciente;
 
 public interface ConsultaDiagnosticoDAO {
     
-    public Consulta criar(int id, LocalDate data, Boolean pagou, Double valorPago,
+    public boolean existeConsulta(int idConsulta) throws BancoDeDadosException, SQLException;
+    
+    public Consulta criar(LocalDate data, Boolean pagou, Double valorPago,
             FormaDePagamento formaDePagamento, Especialidade especialidade,
             LocalTime inicio, LocalTime fim, Paciente paciente, Medico medico) throws BancoDeDadosException, SQLException;
     

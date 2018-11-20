@@ -9,12 +9,36 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
+
 public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements DoencaDAO {
 
     public static final String SCHEMA = "clinica_medica";
     public static final String NOME_DA_TABELA = "Doenca";
     public static final String NOME_COMPLETO = ConectorDAOPostgresql.nomeCompleto(SCHEMA, NOME_DA_TABELA);
     
+    
+    @Override
+    public boolean existeDoenca(int id) throws BancoDeDadosException, SQLException {
+    
+        Connection conexao = this.fabricaDeConexoes.getConexao();
+        
+        String sql = "SELECT COUNT(1) FROM " + NOME_COMPLETO + 
+                " WHERE id_doenca =" + id;
+        
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            if(resultSet.next()) {
+                int quantidade = resultSet.getInt(1);
+                
+                return quantidade != 0;
+            }
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível verificar a exitência da doença no banco de dados", sqle);
+        } finally {
+            conexao.close();
+        }
+        
+        return false;
+    }
     
     @Override
     public Doenca criar(int id, String nome) throws BancoDeDadosException, SQLException {
@@ -63,6 +87,10 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
     @Override
     public void remover(int id) throws BancoDeDadosException, SQLException {
         
+        if(!this.existeDoenca(id)) {
+            throw new BancoDeDadosException("Não existe nenhuma doença com este ID");
+        }
+        
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
         String sql = "DELETE FROM " + NOME_COMPLETO + " WHERE id_doenca = ?";
@@ -89,10 +117,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
         String sql = "SELECT * FROM " + NOME_COMPLETO + "  WHERE id_doenca = " + id;
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             if(resultSet.next()) {
-                int idEncontrado = resultSet.getInt("id_doenca");
-                String nome = resultSet.getString("nome");
-                
-                doenca = new Doenca(idEncontrado, nome);
+                doenca =this.criarDoencaAPartirDe(resultSet);
             }
         } catch(SQLException sqle) {
             throw new BancoDeDadosException("Não foi possível encontrar a doença com este ID: ", sqle);
@@ -114,11 +139,7 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
                 + "LIKE '%" + nome + "%'";
         try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
             while(resultSet.next()) {
-                int id = resultSet.getInt("id_doenca");
-                String nomeEncontrado1 = resultSet.getString("nome");
-
-                Doenca doenca = new Doenca(id, nomeEncontrado1);
-                
+                Doenca doenca = this.criarDoencaAPartirDe(resultSet);
                 doencasEncontradas.add(doenca);
             }
         } catch(SQLException sqle) {
@@ -128,5 +149,13 @@ public class DoencaDAOPostgresql extends ConectorDAOPostgresql implements Doenca
         }
         
         return doencasEncontradas;
-    } 
+    }
+    
+    
+    private Doenca criarDoencaAPartirDe(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id_doenca");
+        String nomeEncontrado1 = resultSet.getString("nome");
+
+        return new Doenca(id, nomeEncontrado1);
+    }
 }

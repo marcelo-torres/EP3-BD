@@ -15,27 +15,19 @@ public class TesteTaxa {
         
         EspecialidadeDAOPostgresql especialidadeDAO = new EspecialidadeDAOPostgresql();
         TaxaDAOPostgresql taxaDAO = new TaxaDAOPostgresql();
+
         
+        Especialidade esp1 = especialidadeDAO.criar(1, "Cardiologista");
+        Especialidade esp2 = especialidadeDAO.criar(1, "Medicologista");
         
-        taxaDAO.remover(10);
-        taxaDAO.remover(11);
-        taxaDAO.remover(12);
-        taxaDAO.remover(13);
+        Taxa taxa1 = taxaDAO.criar(2018, Mes.MAIO, 10.24, esp1);
+        Taxa taxa2 = taxaDAO.criar(2018, Mes.JUNHO, 10.24, esp1);
+        Taxa taxa3 = taxaDAO.criar(2018, Mes.JUNHO, 10.24, esp1);
         
+        Taxa taxa4 = taxaDAO.criar(2018, Mes.JUNHO, 10.24, esp2);
+
         
-        especialidadeDAO.remover(1);
-        especialidadeDAO.remover(2);
-        
-        Especialidade esp1 = especialidadeDAO.criar(1, 1, "Cardiologista");
-        Especialidade esp2 = especialidadeDAO.criar(2, 1, "Medicologista");
-        
-        Taxa taxa1 = taxaDAO.criar(10, 2018, Mes.MAIO, 10.24, esp1);
-        Taxa taxa2 = taxaDAO.criar(11, 2018, Mes.JUNHO, 10.24, esp1);
-        Taxa taxa3 = taxaDAO.criar(12, 2018, Mes.JUNHO, 10.24, esp1);
-        
-        Taxa taxa4 = taxaDAO.criar(13, 2018, Mes.JUNHO, 10.24, esp2);
-        
-        Taxa taxaEncontrada = taxaDAO.buscar(taxa1.getIDTaxa());
+        Taxa taxaEncontrada = taxaDAO.buscar(taxa1.getId());
         if(taxa1.equals(taxaEncontrada)) {
             System.out.println("[1] - OK - Busca realizada com sucesso");
         } else {
@@ -82,13 +74,21 @@ public class TesteTaxa {
             erros++;
         }
         
-        taxaDAO.remover(10);
-        taxaDAO.remover(11);
-        taxaDAO.remover(12);
-        taxaDAO.remover(13);
+        if(taxaDAO.existeTaxa(taxa1.getId())) {
+            System.out.println("[5] - OK - A taxa realmente existe");
+        } else {
+            System.out.println("[5] - ERRO - A taxa nao existe");
+            erros++;
+        }
         
-        return erros;
+        taxaDAO.remover(taxa1.getId());
+        taxaDAO.remover(taxa2.getId());
+        taxaDAO.remover(taxa3.getId());
+        taxaDAO.remover(taxa4.getId());
         
+        especialidadeDAO.remover(esp1.getCodigo());
+        especialidadeDAO.remover(esp2.getCodigo());
+        
+        return erros;  
     }
-    
 }

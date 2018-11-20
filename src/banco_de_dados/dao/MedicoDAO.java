@@ -10,6 +10,8 @@ import pessoas.medico.Medico;
 
 public interface MedicoDAO {
     
+    public boolean existeMedico(int crm) throws BancoDeDadosException, SQLException;
+    
     public Medico criar(int crm, String nome, Telefone telefone,
             LinkedList<Especialidade> especialidades) throws BancoDeDadosException, SQLException;
     

@@ -1,22 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package teste_banco_de_dados;
 
 import banco_de_dados.dao.postgresql.DoencaDAOPostgresql;
 import dados_da_clinica.Doenca;
 import java.util.LinkedList;
 
-/**
- *
- * @author marcelo
- */
+
 public class TesteDoenca {
     
     public static int testar() throws Exception {
     
+        System.out.println("\n === Testando Doenca ===");
+        
         int erros = 0;
         
         DoencaDAOPostgresql doencaDAO = new DoencaDAOPostgresql();

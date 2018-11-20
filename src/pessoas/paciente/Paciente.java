@@ -45,7 +45,7 @@ public class Paciente {
     }
     
     
-    private final int CODIGO;
+    private int codigo;
     private CPF cpf;
     private String nome;
     private Telefone telefone;
@@ -54,24 +54,26 @@ public class Paciente {
     private Sexo sexo;
     
     
+    public Paciente(CPF cpf, String nome, Telefone telefone,
+            String endereco, Integer idade, Sexo sexo) {
+        this.setCodigo(codigo);
+        this.setCPF(cpf);
+        this.setNome(nome);
+        this.setTelefone(telefone);
+        this.setEndereco(endereco);
+        this.setIdade(idade);
+        this.setSexo(sexo);
+    }
+    
     public Paciente(int codigo, CPF cpf, String nome, Telefone telefone,
             String endereco, Integer idade, Sexo sexo) {
-        
-        verificarCodigo(codigo);
-        verificarCPF(cpf);
-        verificarNome(nome);
-        verificarTelefone(telefone);
-        verificarEndereco(endereco);
-        verificarIdade(idade);
-        verificarSexo(sexo);
-        
-        this.CODIGO = codigo;
-        this.cpf = cpf;
-        this.nome = nome;
-        this.telefone = telefone;
-        this.endereco = endereco;
-        this.idade = idade;
-        this.sexo = sexo;
+        this.setCodigo(codigo);
+        this.setCPF(cpf);
+        this.setNome(nome);
+        this.setTelefone(telefone);
+        this.setEndereco(endereco);
+        this.setIdade(idade);
+        this.setSexo(sexo);
     }
     
     
@@ -84,7 +86,7 @@ public class Paciente {
         
         Paciente outroPaciente = (Paciente)outro;
         
-        boolean saoIguais = (this.CODIGO == outroPaciente.getCodigo()
+        boolean saoIguais = (this.codigo == outroPaciente.getCodigo()
                 && this.cpf.equals(outroPaciente.getCPF())
                 && this.nome.equals(outroPaciente.getNome())
                 && this.telefone.equals(outroPaciente.getTelefone())
@@ -98,7 +100,7 @@ public class Paciente {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 97 * hash + this.CODIGO;
+        hash = 97 * hash + this.codigo;
         hash = 97 * hash + Objects.hashCode(this.cpf);
         hash = 97 * hash + Objects.hashCode(this.nome);
         hash = 97 * hash + Objects.hashCode(this.telefone);
@@ -108,6 +110,11 @@ public class Paciente {
         return hash;
     }
     
+    
+    public void setCodigo(int codigo) {
+        verificarCodigo(codigo);
+        this.codigo = codigo;
+    }
     
     public void setCPF(CPF cpf) {
         verificarCPF(cpf);
@@ -141,7 +148,7 @@ public class Paciente {
     
     
     public int getCodigo() {
-        return this.CODIGO;
+        return this.codigo;
     }
     
     public CPF getCPF() {

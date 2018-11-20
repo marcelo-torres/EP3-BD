@@ -7,6 +7,8 @@ import java.util.LinkedList;
 
 public interface DoencaDAO {
     
+    public boolean existeDoenca(int id) throws BancoDeDadosException, SQLException;
+    
     public Doenca criar(int ID, String nome) throws BancoDeDadosException, SQLException;
     
     public void gravar(Doenca doenca) throws BancoDeDadosException, SQLException;

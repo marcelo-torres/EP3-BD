@@ -1,39 +1,31 @@
-package pessoas.paciente;
+package teste_banco_de_dados;
 
 import banco_de_dados.dao.postgresql.AgendaDAOPostgresql;
-import banco_de_dados.dao.postgresql.EspecialidadeMedicoDAOPostgresql;
 import banco_de_dados.dao.postgresql.EspecialidadeDAOPostgresql;
 import banco_de_dados.dao.postgresql.MedicoDAOPostgresql;
 import dados_da_clinica.Especialidade;
-import java.sql.Time;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import pessoas.Telefone;
 import pessoas.medico.Agenda;
 import pessoas.medico.Medico;
+import pessoas.paciente.DiaDaSemana;
+
 
 public class TesteAgenda {
     
     public static int testar() throws Exception {
     
+        System.out.println("\n === Testando agenda ===");
+        
         int erros = 0;
         
         AgendaDAOPostgresql agendaDao = new AgendaDAOPostgresql();
         EspecialidadeDAOPostgresql especialidadeDao = new EspecialidadeDAOPostgresql();
         MedicoDAOPostgresql medicoDao = new MedicoDAOPostgresql();
-      
-        medicoDao.remover(1010);
-        medicoDao.remover(2020);
-        especialidadeDao.remover(1);
-        especialidadeDao.remover(2);
-      
-        agendaDao.remover(10);
-        agendaDao.remover(20);
-        agendaDao.remover(30);
         
-        Especialidade esp1 = especialidadeDao.criar(1, 4, "Otorrino");
-        Especialidade esp2 = especialidadeDao.criar(2, 5, "Legista");
+        Especialidade esp1 = especialidadeDao.criar(4, "Otorrino");
+        Especialidade esp2 = especialidadeDao.criar(5, "Legista");
 
         LinkedList<Especialidade> especialidades1 = new LinkedList();
         especialidades1.add(esp1);
@@ -43,14 +35,14 @@ public class TesteAgenda {
         LocalTime horarioDeInicio = LocalTime.parse("14:45");
         LocalTime horarioDoFim = LocalTime.parse("14:55");
    
-        Agenda agenda1 = agendaDao.criar(10, DiaDaSemana.SEGUNDA, horarioDeInicio, horarioDoFim, medico1);
-        Agenda agenda2 = agendaDao.criar(20, DiaDaSemana.TERCA, horarioDeInicio, horarioDoFim, medico1);
-        Agenda agenda3 = agendaDao.criar(30, DiaDaSemana.QUARTA, horarioDeInicio, horarioDoFim, medico1);
+        Agenda agenda1 = agendaDao.criar(DiaDaSemana.SEGUNDA, horarioDeInicio, horarioDoFim, medico1);
+        Agenda agenda2 = agendaDao.criar(DiaDaSemana.TERCA, horarioDeInicio, horarioDoFim, medico1);
+        Agenda agenda3 = agendaDao.criar(DiaDaSemana.QUARTA, horarioDeInicio, horarioDoFim, medico1);
         
         agenda3.setDiaDaSemana(DiaDaSemana.SABADO);
         agendaDao.gravar(agenda3);
         
-        Agenda agendaEncontrada = agendaDao.buscar(20);
+        Agenda agendaEncontrada = agendaDao.buscar(agenda2.getId());
         if(agenda2.equals(agendaEncontrada)) {
             System.out.println("[1] - OK - Gravacao realizada com sucesso");
         } else {
@@ -88,7 +80,7 @@ public class TesteAgenda {
         }
 
         
-        Agenda agenda4 = agendaDao.criar(40, DiaDaSemana.SEGUNDA, horarioDeInicio, horarioDoFim, medico1);
+        Agenda agenda4 = agendaDao.criar(DiaDaSemana.SEGUNDA, horarioDeInicio, horarioDoFim, medico1);
         agendasEncontradas = agendaDao.buscarPeloCrmEPeloDia(1010, DiaDaSemana.SEGUNDA);
         if(agendasEncontradas.size() == 2
                 && agendasEncontradas.contains(agenda1)
@@ -100,13 +92,26 @@ public class TesteAgenda {
             erros++;
         }
         
-        agendaDao.remover(10);
-        agendaDao.remover(20);
-        agendaDao.remover(30);
+        if(agendaDao.existeAgenda(agenda1.getId())) {
+            System.out.println("[5] - OK - Esta agenda existe");
+        } else {
+            System.out.println("[5] - ERRO - Esta agenda NAO existe");
+        }
+        
+        if(!agendaDao.existeAgenda(15)) {
+            System.out.println("[6] - OK - Esta agenda NAO  existe");
+        } else {
+            System.out.println("[6] - ERRO - Esta agenda existe");
+        }
+        
+        
+        agendaDao.remover(agenda1.getId());
+        agendaDao.remover(agenda2.getId());
+        agendaDao.remover(agenda3.getId());
+        agendaDao.remover(agenda4.getId());
         
         medicoDao.remover(medico1.getCRM());
-        medicoDao.remover(2020);
-        
+        medicoDao.remover(novoMedico.getCRM());
         especialidadeDao.remover(esp1.getCodigo());
         especialidadeDao.remover(esp2.getCodigo());
 

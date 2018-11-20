@@ -1,45 +1,44 @@
 package dados_da_clinica;
 
-import java.util.Collection;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author marcelo
- */
 public class Especialidade {
  
+    public static void verificarCodigo(int codigo) {
+        if(codigo < 0) {
+            throw new IllegalArgumentException("O código não pode ser menor do que 0");
+        }
+    }
+    
     public static void verificarIndice(int indice) {
         if(indice < 0) {
-            throw new IllegalArgumentException("O indice nao pode ser menor do que 0");
+            throw new IllegalArgumentException("O índice não pode ser menor do que 0");
         }
     }
     
     public static void verificarNome(String nome) {
+        if(nome == null) {
+            throw new IllegalArgumentException("Um nome deve ser atribuído à especialidade");
+        }
         if(nome.length() > 100) {
-            throw new IllegalArgumentException("O nome nao pode ter mais do que 100 caracteres");
+            throw new IllegalArgumentException("O nome não pode ter mais do que 100 caracteres");
         }
     }
     
     
-    private int CODIGO;
+    private int codigo;
     private int indice;
     private String nome;
     
     
+    public Especialidade(int indice, String nome) {
+        this.setIndice(indice);
+        this.setNome(nome);
+    }
+    
     public Especialidade(int codigo, int indice, String nome) {
-        
-        verificarIndice(indice);
-        verificarNome(nome);
-        
-        this.CODIGO = codigo;
-        this.indice = indice;
-        this.nome = nome;
+        this.setCodigo(codigo);
+        this.setIndice(indice);
+        this.setNome(nome);
     }
     
     
@@ -57,13 +56,18 @@ public class Especialidade {
         
         Especialidade outraEspecialidade = (Especialidade)outro;
         
-        boolean saoIguais = this.CODIGO == outraEspecialidade.getCodigo()
+        boolean saoIguais = this.codigo == outraEspecialidade.getCodigo()
                 && this.indice == outraEspecialidade.getIndice()
                 && this.nome.equals(outraEspecialidade.getNome());
         
         return saoIguais;
     }
     
+    
+    public void setCodigo(int codigo) {
+        verificarCodigo(codigo);
+        this.codigo = codigo;
+    }
     
     public void setIndice(int novoIndice) {
         verificarIndice(novoIndice);
@@ -77,7 +81,7 @@ public class Especialidade {
     
     
     public int getCodigo() {
-        return this.CODIGO;
+        return this.codigo;
     }
     
     public int getIndice() {

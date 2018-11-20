@@ -28,17 +28,40 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     
     
     @Override
-    public Consulta criar(int id, LocalDate data, Boolean pagou, Double valorPago, 
+    public boolean existeConsulta(int idConsulta) throws BancoDeDadosException, SQLException {
+        
+        Connection conexao = this.fabricaDeConexoes.getConexao();
+        
+        String sql = "SELECT COUNT(1) FROM " + NOME_COMPLETO + 
+                " WHERE id_consulta =" + idConsulta;
+        
+        try(ResultSet resultSet = conexao.createStatement().executeQuery(sql)) {
+            if(resultSet.next()) {
+                int quantidade = resultSet.getInt(1);
+                
+                return quantidade != 0;
+            }
+        } catch(SQLException sqle) {
+            throw new BancoDeDadosException("Não foi possível verificar a exitência da consulta no banco de dados", sqle);
+        } finally {
+            conexao.close();
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public Consulta criar(LocalDate data, Boolean pagou, Double valorPago, 
             FormaDePagamento formaDePagamento, Especialidade especialidade, 
             LocalTime inicio, LocalTime fim, Paciente paciente, Medico medico) throws BancoDeDadosException, SQLException {
         
-        Consulta consulta = new Consulta(id, data, pagou, valorPago, formaDePagamento, 
+        Consulta consulta = new Consulta(data, pagou, valorPago, formaDePagamento, 
                 especialidade, inicio, fim, paciente, medico);
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
-        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (?, ?, ?, ?, ?, ?,"
-                + " ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + NOME_COMPLETO + " VALUES (DEFAULT, ?, ?, ?, ?, ?,"
+                + " ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id_consulta";
         
         // Variaveis que exigem chamadas de metodos
         Date dataInsercao = (data == null ? null : java.sql.Date.valueOf(data));
@@ -50,7 +73,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
         Integer codigoEspecialidadeInsercao = (consulta.getEspecialidade() == null ? null : consulta.getEspecialidade().getCodigo());
         
         Diagnostico diagnostico = consulta.getDiagnostico();
-        Integer idDiagnosticoInsercao = (diagnostico == null ? null : diagnostico.getID());
+        Integer idDiagnosticoInsercao = (diagnostico == null ? null : diagnostico.getId());
         String observacoesInsercao = (diagnostico == null ? null : diagnostico.getObservacoes());
         String remediosReceitadosInsercao = (diagnostico == null ? null : diagnostico.getRemediosReceitados());
         String tratamentoRecomendadoInsercao = (diagnostico == null ? null : diagnostico.getTratamentoRecomendado());
@@ -62,29 +85,32 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
         }
 
         try(PreparedStatement statement = conexao.prepareStatement(sql)) {
-            statement.setInt(1, id);
-            statement.setObject(2, dataInsercao);
-            statement.setBoolean(3, pagou);
-            statement.setObject(4, valorPago, java.sql.Types.DOUBLE);
-            statement.setString(5, formaDePagamentoInsercao);
-            statement.setTime(6, inicioInsercao);
-            statement.setTime(7, fimInsercao);  
-            statement.setInt(8, codigoPacienteInsercao);
-            statement.setInt(9, crmMedicoInsercao);
-            statement.setInt(10, codigoEspecialidadeInsercao);
-            statement.setInt(11, idDiagnosticoInsercao);
-            statement.setString(12, observacoesInsercao);
-            statement.setString(13, remediosReceitadosInsercao);
-            statement.setString(14, tratamentoRecomendadoInsercao);
-            statement.setObject(15, idDoencaInsercao);
+            statement.setObject(1, dataInsercao);
+            statement.setBoolean(2, pagou);
+            statement.setObject(3, valorPago, java.sql.Types.DOUBLE);
+            statement.setString(4, formaDePagamentoInsercao);
+            statement.setTime(5, inicioInsercao);
+            statement.setTime(6, fimInsercao);  
+            statement.setInt(7, codigoPacienteInsercao);
+            statement.setInt(8, crmMedicoInsercao);
+            statement.setInt(9, codigoEspecialidadeInsercao);
+            statement.setInt(10, idDiagnosticoInsercao);
+            statement.setString(11, observacoesInsercao);
+            statement.setString(12, remediosReceitadosInsercao);
+            statement.setString(13, tratamentoRecomendadoInsercao);
+            statement.setObject(14, idDoencaInsercao);
             
             statement.execute();
+            
+            ResultSet resultSet = statement.getResultSet();
+            
+            if(resultSet.next()) {
+                consulta.setId(resultSet.getInt(1));
+            }
+            
             statement.close();
         } catch(SQLException sqle) {
-            sqle.printStackTrace();
-            throw new BancoDeDadosException("Não foi possível criar a consulta: ", sqle);
-        } catch(Exception e) {
-            e.printStackTrace();
+            throw new BancoDeDadosException("Não foi possível criar a consulta", sqle);
         } finally {
             conexao.close();
         }
@@ -152,6 +178,10 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
 
     @Override
     public void remover(int id) throws BancoDeDadosException, SQLException {
+        
+        if(!this.existeConsulta(id)) {
+            throw new BancoDeDadosException("Não existe nenhuma consulta com este código");
+        }
         
         Connection conexao = this.fabricaDeConexoes.getConexao();
         
@@ -413,12 +443,12 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
     
     private Consulta criarConsultaAPartirDe(ResultSet resultSet) throws BancoDeDadosException, SQLException {
         int id = resultSet.getInt("id_consulta");
-        Date dataBancoDeDados = resultSet.getDate("data");
+        LocalDate data = this.toLocalDate(resultSet.getDate("data"));
         Boolean pagou = resultSet.getBoolean("pagou");
         Double valorPago = (Double)resultSet.getObject("valor_pago");
         String formaDePagamentoBancoDeDados = resultSet.getString("forma_pagamento");
-        Time horarioInicioBancoDeDados = resultSet.getTime("horario_inicio");
-        Time horarioFimBancoDeDados = resultSet.getTime("horario_fim");
+        LocalTime horarioInicio = this.toLocalTime(resultSet.getTime("horario_inicio"));
+        LocalTime horarioFim = this.toLocalTime(resultSet.getTime("horario_fim"));
         Integer codigoPaciente = (Integer)resultSet.getObject("fk_paciente_codigo");
         Integer crmMedico = (Integer)resultSet.getObject("fk_medico_crm");
         Integer codigoEspecialidade = (Integer)resultSet.getObject("fk_especialidade_codigo");
@@ -427,10 +457,7 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
         String tratamentoRecomendado = resultSet.getString("tratamento_recomendado");
         Integer idDoenca = (Integer)resultSet.getObject("fk_doenca_id_doenca");
 
-        LocalDate data = (dataBancoDeDados == null ? null : dataBancoDeDados.toLocalDate());
         FormaDePagamento formaDePagamento = (formaDePagamentoBancoDeDados == null ? null : FormaDePagamento.obterValor(formaDePagamentoBancoDeDados));
-        LocalTime horarioInicio = (horarioInicioBancoDeDados == null ? null : horarioInicioBancoDeDados.toLocalTime());
-        LocalTime horarioFim = (horarioFimBancoDeDados == null ? null : horarioFimBancoDeDados.toLocalTime());
 
         Paciente paciente = new PacienteDAOPostgresql().buscarPeloCodigo(codigoPaciente);
         Medico medico = new MedicoDAOPostgresql().buscarPeloCrm(crmMedico);
@@ -452,5 +479,21 @@ public class ConsultaDiagnosticoDAOPostgresql extends ConectorDAOPostgresql impl
         diagnostico.setTratamentoRecomendado(tratamentoRecomendado);
         
         return consulta;
+    }
+    
+    private LocalDate toLocalDate(Date data) {
+        if(data == null) {
+            return null;
+        } else {
+            return data.toLocalDate();
+        }
+    }
+    
+    private LocalTime toLocalTime(Time hora) {
+        if(hora == null) {
+            return null;
+        } else {
+            return hora.toLocalTime();
+        }
     }
 }

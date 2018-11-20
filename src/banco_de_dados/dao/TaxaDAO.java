@@ -10,7 +10,9 @@ import java.util.LinkedList;
 
 public interface TaxaDAO {
     
-    public Taxa criar(int idTaxa, Integer ano, Mes mes, double valor, 
+    public boolean existeTaxa(int idTaxa) throws BancoDeDadosException, SQLException;
+    
+    public Taxa criar(Integer ano, Mes mes, double valor, 
             Especialidade especialidade) throws BancoDeDadosException, SQLException;
     
     public void gravar(Taxa taxa) throws BancoDeDadosException, SQLException;

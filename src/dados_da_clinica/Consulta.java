@@ -1,12 +1,12 @@
 package dados_da_clinica;
 
-
 import pessoas.paciente.Paciente;
 import pessoas.medico.Medico;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+
 
 public class Consulta {
     
@@ -16,7 +16,7 @@ public class Consulta {
     
     public static class Diagnostico {
     
-        public static void verificarID(int id) {
+        public static void verificarId(int id) {
             if(id < 0) {
                 throw new IllegalArgumentException("O ID da doença não pode ser negativo");
             }
@@ -45,23 +45,28 @@ public class Consulta {
         }
         
         
-        private final int ID;
+        private int id;
         private String observacoes;
         private String remediosReceitados;
         private String tratamentoRecomendado;
         private Doenca doenca;
         
         
+        public Diagnostico(String observacoes, String remediosReceitados,
+                String tratamentoRecomendado, Doenca doenca) {
+            this.setObservacoes(observacoes);
+            this.setRemediosReceitados(remediosReceitados);
+            this.setTratamentoRecomendado(tratamentoRecomendado);
+            this.setDoenca(doenca);
+        }
+        
         public Diagnostico(int id, String observacoes, String remediosReceitados,
                 String tratamentoRecomendado, Doenca doenca) {
-        
-            verificarID(id);
-            this.ID = id;
-            
-            setObservacoes(observacoes);
-            setRemediosReceitados(remediosReceitados);
-            setTratamentoRecomendado(tratamentoRecomendado);
-            setDoenca(doenca);
+            this.setId(id);
+            this.setObservacoes(observacoes);
+            this.setRemediosReceitados(remediosReceitados);
+            this.setTratamentoRecomendado(tratamentoRecomendado);
+            this.setDoenca(doenca);
         }
         
         
@@ -74,7 +79,7 @@ public class Consulta {
             
             Diagnostico outroDiagnostico = (Diagnostico)outro;
             
-            boolean saoIguais = (this.ID == outroDiagnostico.getID()
+            boolean saoIguais = (this.id == outroDiagnostico.getId()
                     && Objects.equals(this.observacoes, outroDiagnostico.getObservacoes())
                     && Objects.equals(this.remediosReceitados, outroDiagnostico.getRemediosReceitados())
                     && Objects.equals(this.tratamentoRecomendado, outroDiagnostico.getTratamentoRecomendado())
@@ -86,7 +91,7 @@ public class Consulta {
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 79 * hash + this.ID;
+            hash = 79 * hash + this.id;
             hash = 79 * hash + Objects.hashCode(this.observacoes);
             hash = 79 * hash + Objects.hashCode(this.remediosReceitados);
             hash = 79 * hash + Objects.hashCode(this.tratamentoRecomendado);
@@ -94,6 +99,11 @@ public class Consulta {
             return hash;
         }
         
+        
+        public void setId(int id) {
+            verificarId(id);
+            this.id = id;
+        }
         
         public void setObservacoes(String observacoes) {
             verificarObservacoes(observacoes);
@@ -116,8 +126,8 @@ public class Consulta {
         }
         
         
-        public int getID() {
-            return this.ID;
+        public int getId() {
+            return this.id;
         }
         
         public String getObservacoes() {
@@ -138,7 +148,7 @@ public class Consulta {
     }
     
     
-    public static void verificarID(int id) {
+    public static void verificarId(int id) {
         if(id < 0) {
             throw new IllegalArgumentException("O ID da consulta não pode ser negativo");
         }
@@ -189,7 +199,7 @@ public class Consulta {
     }
     
     
-    private final int ID;
+    private int id;
     private LocalDate data;
     private Boolean pagou;
     private Double valorPago;
@@ -202,12 +212,11 @@ public class Consulta {
     
     private final Diagnostico DIAGNOSTICO;
     
-    public Consulta(int id, LocalDate data, Boolean pagou, Double valorPago,
+    public Consulta(LocalDate data, Boolean pagou, Double valorPago,
             FormaDePagamento formaDePagamento, Especialidade especialidade,
             LocalTime inicio, LocalTime fim, Paciente paciente, Medico medico) {
     
-        verificarID(id);
-        this.ID = id;
+        this.DIAGNOSTICO = new Diagnostico(id, null, null, null, null);
         
         this.setData(data);
         this.setPagou(pagou);
@@ -218,8 +227,24 @@ public class Consulta {
         this.setFim(fim);
         this.setPaciente(paciente);
         this.setMedico(medico);
-        
+    }
+    
+    public Consulta(int id, LocalDate data, Boolean pagou, Double valorPago,
+            FormaDePagamento formaDePagamento, Especialidade especialidade,
+            LocalTime inicio, LocalTime fim, Paciente paciente, Medico medico) {
+    
         this.DIAGNOSTICO = new Diagnostico(id, null, null, null, null);
+        
+        this.setId(id);
+        this.setData(data);
+        this.setPagou(pagou);
+        this.setValorPago(valorPago);
+        this.setFormaDePagamaento(formaDePagamento);
+        this.setEspecialidade(especialidade);
+        this.setInicio(inicio);
+        this.setFim(fim);
+        this.setPaciente(paciente);
+        this.setMedico(medico);
     }
     
     
@@ -232,7 +257,7 @@ public class Consulta {
         
         Consulta outraConsulta = (Consulta)outro;
         
-        boolean saoIguais = (this.ID == outraConsulta.getID()
+        boolean saoIguais = (this.id == outraConsulta.getID()
                 && this.data.equals(outraConsulta.getData())
                 && Objects.equals(this.valorPago, outraConsulta.getValorPago())
                 && Objects.equals(this.formaDePagamento, outraConsulta.getFormaDePagamento())
@@ -249,7 +274,7 @@ public class Consulta {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 29 * hash + this.ID;
+        hash = 29 * hash + this.id;
         hash = 29 * hash + Objects.hashCode(this.data);
         hash = 29 * hash + Objects.hashCode(this.valorPago);
         hash = 29 * hash + Objects.hashCode(this.formaDePagamento);
@@ -261,6 +286,12 @@ public class Consulta {
         return hash;
     }
     
+    
+    public void setId(int id) {
+        verificarId(id);
+        this.DIAGNOSTICO.setId(id);
+        this.id = id;
+    }
     
     public void setData(LocalDate data) {
         verificarData(data);
@@ -317,7 +348,7 @@ public class Consulta {
     
     
     public int getID() {
-        return this.ID;
+        return this.id;
     }
     
     public LocalDate getData() {
