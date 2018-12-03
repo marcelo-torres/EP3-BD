@@ -1,5 +1,8 @@
 package dados_da_clinica;
 
+import java.util.ArrayList;
+import pessoas.medico.Medico;
+
 
 public class Especialidade {
  
@@ -28,17 +31,19 @@ public class Especialidade {
     private int codigo;
     private int indice;
     private String nome;
-    
+    private ArrayList<Medico> ListaMedicos;
     
     public Especialidade(int indice, String nome) {
         this.setIndice(indice);
         this.setNome(nome);
+        ListaMedicos = new ArrayList();
     }
     
     public Especialidade(int codigo, int indice, String nome) {
         this.setCodigo(codigo);
         this.setIndice(indice);
         this.setNome(nome);
+        ListaMedicos = new ArrayList();
     }
     
     
@@ -91,4 +96,26 @@ public class Especialidade {
     public String getNome() {
         return this.nome;
     }
+
+    /**
+     * @return the ListaMedicos
+     */
+    public ArrayList<Medico> getListaMedicos() {
+        return ListaMedicos;
+    }
+
+    /**
+     * @param ListaMedicos the ListaMedicos to set
+     */
+    public void setListaMedicos(ArrayList<Medico> ListaMedicos) {
+        this.ListaMedicos = ListaMedicos;
+    }
+    
+    public void addMedico (Medico medico) {
+        medico.adicionarEspecialidade(this);
+        ListaMedicos.add(medico);
+    }
+    
+    
+    
 }
