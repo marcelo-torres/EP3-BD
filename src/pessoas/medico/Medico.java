@@ -63,8 +63,8 @@ public class Medico {
         
         Medico outroMedico = (Medico)outro;
         
-        boolean saoIguais = (/*this.CRM == outroMedico.getCRM()
-                &&*/ this.nome.equals(outroMedico.getNome())
+        boolean saoIguais = (this.CRM == outroMedico.getCRM()
+                && this.nome.equals(outroMedico.getNome())
                 && this.telefone.equals(outroMedico.getTelefone())
                 && this.especialidades.containsAll(outroMedico.getEspecialidades())
                 && outroMedico.getEspecialidades().containsAll(this.especialidades));
@@ -75,7 +75,7 @@ public class Medico {
     @Override
     public int hashCode() {
         int hash = 7;
-        //hash = 59 * hash + this.CRM;
+        hash = 59 * hash + this.CRM;
         hash = 59 * hash + Objects.hashCode(this.nome);
         hash = 59 * hash + Objects.hashCode(this.telefone);
         hash = 59 * hash + Objects.hashCode(this.especialidades);
