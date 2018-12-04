@@ -2,6 +2,8 @@ package my.clinicamedica;
 
 import banco_de_dados.BancoDeDadosException;
 import banco_de_dados.dao.MedicoDAO;
+import banco_de_dados.dao.postgresql.MedicoDAOPostgresql;
+import dados_da_clinica.Especialidade;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +11,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import pessoas.Telefone;
 import pessoas.medico.Medico;
 
 /**
@@ -17,7 +20,7 @@ import pessoas.medico.Medico;
  */
 public class ClinicaMedicaUI extends javax.swing.JFrame {
 
-    private Medico medico;
+    Medico medico = new Medico();
 
     /**
      * Creates new form ClinicaMedicaUI
@@ -321,12 +324,29 @@ public class ClinicaMedicaUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_eqpMedica_cancelarActionPerformed
 
     private void btn_eqpMedica_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eqpMedica_salvarActionPerformed
-            limparCamposMedicos();
+        limparCamposMedicos();
 
-           desbloquearBotoes(false);
-           desbloquearCampos(false);
-        
-           //Salvar o médico no BD
+        desbloquearBotoes(false);
+        desbloquearCampos(false);
+
+        Especialidade especialidade = new Especialidade(1, c_eqpMedica_especialidade.getText());
+        Telefone telefone = new Telefone(c_eqpMedica_telefone.getText());
+
+        medico.setNome(c_eqpMedica_nome.getText());
+        medico.setTelefone(telefone);
+        medico.setCRM(Integer.valueOf(c_eqpMedica_CRM.getText()));
+        medico.adicionarEspecialidade(especialidade);
+
+        //Salvar o médico no BD
+        MedicoDAOPostgresql dao = new MedicoDAOPostgresql();
+        try {
+            dao.gravar(medico);
+        } catch (BancoDeDadosException ex) {
+            Logger.getLogger(ClinicaMedicaUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ClinicaMedicaUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_btn_eqpMedica_salvarActionPerformed
 
     //METODOS AUXILIARES
@@ -379,7 +399,7 @@ public class ClinicaMedicaUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClinicaMedicaUI().setVisible(true); 
+                new ClinicaMedicaUI().setVisible(true);
             }
         });
     }
